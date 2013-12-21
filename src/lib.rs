@@ -12,10 +12,28 @@
 //	Dual2		x	x	x	x	x	x
 //	Complex		x	x	x	x	x	x
 //	Quaternion	x	x	x	x	x	x
+//	Matrix4		x	x	x	w	x	-
+
+//			Det	Inv
+//	Matrix4		x	x
+
+//			ApproxEq
+//	Dual2
+//	Complex
+//	Quaternion
+//	Matrix4		f64
 
 /// Computes the square of length of algebraic type.
 pub trait NormSq<Result> {
 	fn norm_sq(&self) -> Result;
+}
+
+pub trait Det<Result> {
+	fn det(&self) -> Result;
+}
+
+pub trait Inv<Result> {
+	fn inv(&self) -> Result;
 }
 
 #[deriving(Eq)]
@@ -240,4 +258,372 @@ NormSq<T> for Quaternion<T> {
 	}
 }
 
+#[deriving(Eq)]
+pub struct Matrix4<T> {
+	m11: T, m12: T, m13: T, m14: T,
+	m21: T, m22: T, m23: T, m24: T,
+	m31: T, m32: T, m33: T, m34: T,
+	m41: T, m42: T, m43: T, m44: T
+}
+
+impl<T> Matrix4<T> {
+	pub fn new(
+		m11: T, m12: T, m13: T, m14: T,
+		m21: T, m22: T, m23: T, m24: T,
+		m31: T, m32: T, m33: T, m34: T,
+		m41: T, m42: T, m43: T, m44: T
+	) -> Matrix4<T> {
+		Matrix4 {
+			m11: m11, m12: m12, m13: m13, m14: m14,
+			m21: m21, m22: m22, m23: m23, m24: m24,
+			m31: m31, m32: m32, m33: m33, m34: m34,
+			m41: m41, m42: m42, m43: m43, m44: m44
+		}
+	}
+}
+
+impl<T: Add<T, T>>
+Add<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+	fn add(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
+		Matrix4 {
+			m11: self.m11 + rhs.m11,
+			m12: self.m12 + rhs.m12,
+			m13: self.m13 + rhs.m13,
+			m14: self.m14 + rhs.m14,
+
+			m21: self.m21 + rhs.m21,
+			m22: self.m22 + rhs.m22,
+			m23: self.m23 + rhs.m23,
+			m24: self.m24 + rhs.m24,
+
+			m31: self.m31 + rhs.m31,
+			m32: self.m32 + rhs.m32,
+			m33: self.m33 + rhs.m33,
+			m34: self.m34 + rhs.m34,
+
+			m41: self.m41 + rhs.m41,
+			m42: self.m42 + rhs.m42,
+			m43: self.m43 + rhs.m43,
+			m44: self.m44 + rhs.m44
+		}
+	}
+}
+
+impl<T: Sub<T, T>>
+Sub<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+	fn sub(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
+		Matrix4 {
+			m11: self.m11 - rhs.m11,
+			m12: self.m12 - rhs.m12,
+			m13: self.m13 - rhs.m13,
+			m14: self.m14 - rhs.m14,
+
+			m21: self.m21 - rhs.m21,
+			m22: self.m22 - rhs.m22,
+			m23: self.m23 - rhs.m23,
+			m24: self.m24 - rhs.m24,
+
+			m31: self.m31 - rhs.m31,
+			m32: self.m32 - rhs.m32,
+			m33: self.m33 - rhs.m33,
+			m34: self.m34 - rhs.m34,
+
+			m41: self.m41 - rhs.m41,
+			m42: self.m42 - rhs.m42,
+			m43: self.m43 - rhs.m43,
+			m44: self.m44 - rhs.m44
+		}
+	}
+}
+
+impl<T: Mul<T, T> + Add<T, T>>
+Mul<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+	fn mul(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
+		Matrix4 {
+			m11: self.m11*rhs.m11
+				+self.m12*rhs.m21
+				+self.m13*rhs.m31
+				+self.m14*rhs.m41,
+			m12: self.m11*rhs.m12
+				+self.m12*rhs.m22
+				+self.m13*rhs.m32
+				+self.m14*rhs.m42,
+			m13: self.m11*rhs.m13
+				+self.m12*rhs.m23
+				+self.m13*rhs.m33
+				+self.m14*rhs.m43,
+			m14: self.m11*rhs.m14
+				+self.m12*rhs.m24
+				+self.m13*rhs.m34
+				+self.m14*rhs.m44,
+
+			m21: self.m21*rhs.m11
+				+self.m22*rhs.m21
+				+self.m23*rhs.m31
+				+self.m24*rhs.m41,
+			m22: self.m21*rhs.m12
+				+self.m22*rhs.m22
+				+self.m23*rhs.m32
+				+self.m24*rhs.m42,
+			m23: self.m21*rhs.m13
+				+self.m22*rhs.m23
+				+self.m23*rhs.m33
+				+self.m24*rhs.m43,
+			m24: self.m21*rhs.m14
+				+self.m22*rhs.m24
+				+self.m23*rhs.m34
+				+self.m24*rhs.m44,
+		
+			m31: self.m31*rhs.m11
+				+self.m32*rhs.m21
+				+self.m33*rhs.m31
+				+self.m34*rhs.m41,
+			m32: self.m31*rhs.m12
+				+self.m32*rhs.m22
+				+self.m33*rhs.m32
+				+self.m34*rhs.m42,
+			m33: self.m31*rhs.m13
+				+self.m32*rhs.m23
+				+self.m33*rhs.m33
+				+self.m34*rhs.m43,
+			m34: self.m31*rhs.m14
+				+self.m32*rhs.m24
+				+self.m33*rhs.m34
+				+self.m34*rhs.m44,
+
+			m41: self.m41*rhs.m11
+				+self.m42*rhs.m21
+				+self.m43*rhs.m31
+				+self.m44*rhs.m41,
+			m42: self.m41*rhs.m12
+				+self.m42*rhs.m22
+				+self.m43*rhs.m32
+				+self.m44*rhs.m42,
+			m43: self.m41*rhs.m13
+				+self.m42*rhs.m23
+				+self.m43*rhs.m33
+				+self.m44*rhs.m43,
+			m44: self.m41*rhs.m14
+				+self.m42*rhs.m24
+				+self.m43*rhs.m34
+				+self.m44*rhs.m44
+		}
+	}
+}
+
+impl<T: Neg<T>>
+Neg<Matrix4<T>> for Matrix4<T> {
+	fn neg(&self) -> Matrix4<T> {
+		Matrix4 {
+			m11: -self.m11, m12: -self.m12, m13: -self.m13, m14: -self.m14,
+			m21: -self.m21, m22: -self.m22, m23: -self.m23, m24: -self.m24,
+			m31: -self.m31, m32: -self.m32, m33: -self.m33, m34: -self.m34,
+			m41: -self.m41, m42: -self.m42, m43: -self.m43, m44: -self.m44
+		}
+	}
+}
+
+impl<T: Add<T, T> + Mul<T, T> + Sub<T, T>>
+Det<T> for Matrix4<T> {
+	fn det(&self) -> T {
+		self.m11*self.m22*self.m33*self.m44
+		+self.m11*self.m23*self.m34*self.m42
+		+self.m11*self.m24*self.m32*self.m43
+
+		+self.m12*self.m21*self.m34*self.m43
+		+self.m12*self.m23*self.m31*self.m44
+		+self.m12*self.m24*self.m33*self.m41
+
+		+self.m13*self.m21*self.m32*self.m44
+		+self.m13*self.m22*self.m34*self.m41
+		+self.m13*self.m24*self.m31*self.m42
+
+		+self.m14*self.m21*self.m33*self.m42
+		+self.m14*self.m22*self.m31*self.m43
+		+self.m14*self.m23*self.m32*self.m41
+
+		-self.m11*self.m22*self.m34*self.m43
+		-self.m11*self.m23*self.m32*self.m44
+		-self.m11*self.m24*self.m33*self.m42
+
+		-self.m12*self.m21*self.m33*self.m44
+		-self.m12*self.m23*self.m34*self.m41
+		-self.m12*self.m24*self.m31*self.m43
+
+		-self.m13*self.m21*self.m34*self.m42
+		-self.m13*self.m22*self.m31*self.m44
+		-self.m13*self.m24*self.m32*self.m41
+
+		-self.m14*self.m21*self.m32*self.m43
+		-self.m14*self.m22*self.m33*self.m41
+		-self.m14*self.m23*self.m31*self.m42
+	}
+}
+
+impl<T: Add<T, T> + Mul<T, T> + Sub<T, T> + Div<T, T>>
+Inv<Matrix4<T>> for Matrix4<T> {
+	fn inv(&self) -> Matrix4<T> {
+		let det = self.det();
+		Matrix4 {
+			m11: (self.m22*self.m33*self.m44
+				+self.m23*self.m34*self.m42
+				+self.m24*self.m32*self.m43
+				-self.m22*self.m34*self.m43
+				-self.m23*self.m32*self.m44
+				-self.m24*self.m33*self.m42) / det,
+			m12: (self.m12*self.m34*self.m43
+				+self.m13*self.m32*self.m44
+				+self.m14*self.m33*self.m42
+				-self.m12*self.m33*self.m44
+				-self.m13*self.m34*self.m42
+				-self.m14*self.m32*self.m43) / det,
+			m13: (self.m12*self.m23*self.m44
+				+self.m13*self.m24*self.m42
+				+self.m14*self.m22*self.m43
+				-self.m12*self.m24*self.m43
+				-self.m13*self.m22*self.m44
+				-self.m14*self.m23*self.m42) / det,
+			m14: (self.m12*self.m24*self.m33
+				+self.m13*self.m22*self.m34
+				+self.m14*self.m23*self.m32
+				-self.m12*self.m23*self.m34
+				-self.m13*self.m24*self.m32
+				-self.m14*self.m22*self.m33) / det,
+
+			m21: (self.m21*self.m34*self.m43
+				+self.m23*self.m31*self.m44
+				+self.m24*self.m33*self.m41
+				-self.m21*self.m33*self.m44
+				-self.m23*self.m34*self.m41
+				-self.m24*self.m31*self.m43) / det,
+			m22: (self.m11*self.m33*self.m44
+				+self.m13*self.m34*self.m41
+				+self.m14*self.m31*self.m43
+				-self.m11*self.m34*self.m43
+				-self.m13*self.m31*self.m44
+				-self.m14*self.m33*self.m41) / det,
+			m23: (self.m11*self.m24*self.m43
+				+self.m13*self.m21*self.m44
+				+self.m14*self.m23*self.m41
+				-self.m11*self.m23*self.m44
+				-self.m13*self.m24*self.m41
+				-self.m14*self.m21*self.m43) / det,
+			m24: (self.m11*self.m23*self.m34
+				+self.m13*self.m24*self.m31
+				+self.m14*self.m21*self.m33
+				-self.m11*self.m24*self.m33
+				-self.m13*self.m21*self.m34
+				-self.m14*self.m23*self.m31) / det,
+
+			m31: (self.m21*self.m32*self.m44
+				+self.m22*self.m34*self.m41
+				+self.m24*self.m31*self.m42
+				-self.m21*self.m34*self.m42
+				-self.m22*self.m31*self.m44
+				-self.m24*self.m32*self.m41) / det,
+			m32: (self.m11*self.m34*self.m42
+				+self.m12*self.m31*self.m44
+				+self.m14*self.m32*self.m41
+				-self.m11*self.m32*self.m44
+				-self.m12*self.m34*self.m41
+				-self.m14*self.m31*self.m42) / det,
+			m33: (self.m11*self.m22*self.m44
+				+self.m12*self.m24*self.m41
+				+self.m14*self.m21*self.m42
+				-self.m11*self.m24*self.m42
+				-self.m12*self.m21*self.m44
+				-self.m14*self.m22*self.m41) / det,
+			m34: (self.m11*self.m24*self.m32
+				+self.m12*self.m21*self.m34
+				+self.m14*self.m22*self.m31
+				-self.m11*self.m22*self.m34
+				-self.m12*self.m24*self.m31
+				-self.m14*self.m21*self.m32) / det,
+
+			m41: (self.m21*self.m33*self.m42
+				+self.m22*self.m31*self.m43
+				+self.m23*self.m32*self.m41
+				-self.m21*self.m32*self.m43
+				-self.m22*self.m33*self.m41
+				-self.m23*self.m31*self.m42) / det,
+			m42: (self.m11*self.m32*self.m43
+				+self.m12*self.m33*self.m41
+				+self.m13*self.m31*self.m42
+				-self.m11*self.m33*self.m42
+				-self.m12*self.m31*self.m43
+				-self.m13*self.m32*self.m41) / det,
+			m43: (self.m11*self.m23*self.m42
+				+self.m12*self.m21*self.m43
+				+self.m13*self.m22*self.m41
+				-self.m11*self.m22*self.m43
+				-self.m12*self.m23*self.m41
+				-self.m13*self.m21*self.m42) / det,
+			m44: (self.m11*self.m22*self.m33
+				+self.m12*self.m23*self.m31
+				+self.m13*self.m21*self.m32
+				-self.m11*self.m23*self.m32
+				-self.m12*self.m21*self.m33
+				-self.m13*self.m22*self.m31) / det,
+		}
+	}
+}
+
+impl<T: Add<T, T> + Mul<T, T> + Sub<T, T> + Div<T, T>>
+Div<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+	fn div(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
+		let inv = rhs.inv();
+		self * inv
+	}
+}
+
+impl
+ApproxEq<f64> for Matrix4<f64> {
+	fn approx_epsilon() -> f64 {
+		std::f64::EPSILON
+	}
+
+	fn approx_eq(&self, other: &Matrix4<f64>) -> bool {
+		self.m11.approx_eq(&other.m11)
+		&& self.m12.approx_eq(&other.m12)
+		&& self.m13.approx_eq(&other.m13)
+		&& self.m14.approx_eq(&other.m14)
+
+		&& self.m21.approx_eq(&other.m21)
+		&& self.m22.approx_eq(&other.m22)
+		&& self.m23.approx_eq(&other.m23)
+		&& self.m24.approx_eq(&other.m24)
+
+		&& self.m31.approx_eq(&other.m31)
+		&& self.m32.approx_eq(&other.m32)
+		&& self.m33.approx_eq(&other.m33)
+		&& self.m34.approx_eq(&other.m34)
+
+		&& self.m41.approx_eq(&other.m41)
+		&& self.m42.approx_eq(&other.m42)
+		&& self.m43.approx_eq(&other.m43)
+		&& self.m44.approx_eq(&other.m44)
+	}
+
+	fn approx_eq_eps(&self, other: &Matrix4<f64>, approx_epsilon: &f64) -> bool {
+		self.m11.approx_eq_eps(&other.m11, approx_epsilon)
+		&& self.m12.approx_eq_eps(&other.m12, approx_epsilon)
+		&& self.m13.approx_eq_eps(&other.m13, approx_epsilon)
+		&& self.m14.approx_eq_eps(&other.m14, approx_epsilon)
+
+		&& self.m21.approx_eq_eps(&other.m21, approx_epsilon)
+		&& self.m22.approx_eq_eps(&other.m22, approx_epsilon)
+		&& self.m23.approx_eq_eps(&other.m23, approx_epsilon)
+		&& self.m24.approx_eq_eps(&other.m24, approx_epsilon)
+
+		&& self.m31.approx_eq_eps(&other.m31, approx_epsilon)
+		&& self.m32.approx_eq_eps(&other.m32, approx_epsilon)
+		&& self.m33.approx_eq_eps(&other.m33, approx_epsilon)
+		&& self.m34.approx_eq_eps(&other.m34, approx_epsilon)
+
+		&& self.m41.approx_eq_eps(&other.m41, approx_epsilon)
+		&& self.m42.approx_eq_eps(&other.m42, approx_epsilon)
+		&& self.m43.approx_eq_eps(&other.m43, approx_epsilon)
+		&& self.m44.approx_eq_eps(&other.m44, approx_epsilon)
+	}
+}
 

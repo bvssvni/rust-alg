@@ -1,6 +1,6 @@
 extern mod alg;
 
-use alg::{Dual2, Complex, Quaternion, NormSq};
+use alg::{Dual2, Complex, Quaternion, NormSq, Matrix4, Det, Inv};
 
 #[test]
 fn test_dual_add() {
@@ -158,4 +158,142 @@ fn test_quaternion_div() {
 	assert_eq!( c, d );
 }
 
+#[test]
+fn test_matrix4_add() {
+	let a = Matrix4::new(
+		1f64, 0f64, 0f64, 0f64,
+		0f64, 2f64, 0f64, 0f64,
+		0f64, 0f64, 3f64, 0f64,
+		0f64, 0f64, 0f64, 4f64
+	);
+	let b = Matrix4::new(
+		4f64, 0f64, 0f64, 0f64,
+		0f64, 3f64, 0f64, 0f64,
+		0f64, 0f64, 2f64, 0f64,
+		0f64, 0f64, 0f64, 1f64
+	);
+	let c = a + b;
+	let d = Matrix4::new(
+		5f64, 0f64, 0f64, 0f64,
+		0f64, 5f64, 0f64, 0f64,
+		0f64, 0f64, 5f64, 0f64,
+		0f64, 0f64, 0f64, 5f64
+	);
+	assert_eq!( c, d );
+}
 
+#[test]
+fn test_matrix4_sub() {
+	let a = Matrix4::new(
+		1f64, 0f64, 0f64, 0f64,
+		0f64, 2f64, 0f64, 0f64,
+		0f64, 0f64, 3f64, 0f64,
+		0f64, 0f64, 0f64, 4f64
+	);
+	let b = Matrix4::new(
+		4f64, 0f64, 0f64, 0f64,
+		0f64, 3f64, 0f64, 0f64,
+		0f64, 0f64, 2f64, 0f64,
+		0f64, 0f64, 0f64, 1f64
+	);
+	let c = a - b;
+	let d = Matrix4::new(
+		-3f64, 0f64, 0f64, 0f64,
+		0f64, -1f64, 0f64, 0f64,
+		0f64, 0f64, 1f64, 0f64,
+		0f64, 0f64, 0f64, 3f64
+	);
+	assert_eq!( c, d );
+}
+
+#[test]
+fn test_matrix4_mul() {
+	let a = Matrix4::new(
+		1f64, 0f64, 0f64, 0f64,
+		0f64, 2f64, 0f64, 0f64,
+		0f64, 0f64, 3f64, 0f64,
+		0f64, 0f64, 0f64, 4f64
+	);
+	let b = Matrix4::new(
+		4f64, 0f64, 0f64, 0f64,
+		0f64, 3f64, 0f64, 0f64,
+		0f64, 0f64, 2f64, 0f64,
+		0f64, 0f64, 0f64, 1f64
+	);
+	let c = a * b;
+	let d = Matrix4::new(
+		4f64, 0f64, 0f64, 0f64,
+		0f64, 6f64, 0f64, 0f64,
+		0f64, 0f64, 6f64, 0f64,
+		0f64, 0f64, 0f64, 4f64
+	);
+	assert_eq!( c, d );
+}
+
+#[test]
+fn test_matrix4_neg() {
+	let a = Matrix4::new(
+		1f64, 0f64, 0f64, 0f64,
+		0f64, 2f64, 0f64, 0f64,
+		0f64, 0f64, 3f64, 0f64,
+		0f64, 0f64, 0f64, 4f64
+	);
+	let b = -a;
+	let c = Matrix4::new(
+		-1f64, 0f64, 0f64, 0f64,
+		0f64, -2f64, 0f64, 0f64,
+		0f64, 0f64, -3f64, 0f64,
+		0f64, 0f64, 0f64, -4f64
+	);
+	assert_eq!( b, c );
+}
+
+#[test]
+fn test_matrix4_det() {
+	let a = Matrix4::new(
+		1f64, 0f64, 0f64, 0f64,
+		0f64, 2f64, 0f64, 0f64,
+		0f64, 0f64, 3f64, 0f64,
+		0f64, 0f64, 0f64, 4f64
+	);
+	let b = a.det();
+	let c = 24f64;
+	assert_eq!( b, c );
+}
+
+#[test]
+fn test_matrix4_inv() {
+	let a = Matrix4::new(
+		2f64, 3f64, 5f64, 7f64,
+		11f64, 13f64, 17f64, 19f64,
+		23f64,	29f64,	31f64,	37f64,
+		41f64,	43f64,	47f64,	51f64
+	);
+	let b = a.inv();
+	let c = b.inv();
+	assert!( a.approx_eq(&c) );
+}
+
+#[test]
+fn test_matrix4_div() {
+	let a = Matrix4::new(
+		1f64, 0f64, 0f64, 0f64,
+		0f64, 1f64, 0f64, 0f64,
+		0f64, 0f64, 1f64, 0f64,
+		0f64, 0f64, 0f64, 1f64
+	);
+	let b = a / a;
+	assert!( b.approx_eq(&a) );
+}
+
+fn main() {
+	let a = Matrix4::new(
+		2f64, 3f64, 5f64, 7f64,
+		11f64, 13f64, 17f64, 19f64,
+		23f64,	29f64,	31f64,	37f64,
+		41f64,	43f64,	47f64,	51f64
+	);
+	let b = a.inv();
+	let c = b.inv();
+	println!("{:?}", c);
+}
