@@ -12,7 +12,7 @@
 //	Dual2		x	x	x	x	x
 //	Complex		x	x	x	x	x
 //	Quaternion	x	x	x	x	x
-//	Matrix4		x	x	x	w	x
+//	Matrix4		x	x	x	x	x
 //	Vector		x	x	x	x	x
 
 //			Det	Inv	NormSq
@@ -22,11 +22,12 @@
 //	Matrix4		x	x	-
 //	Vector				x
 
-//			ApproxEq
-//	Dual2
-//	Complex
-//	Quaternion
-//	Matrix4		f64
+//			Eq	ApproxEq	Zero	One
+//	Dual2					x
+//	Complex					x
+//	Quaternion				x
+//	Matrix4			f64		x
+//	Vector						
 
 /// Computes the square of length of algebraic type.
 pub trait NormSq<Result> {
@@ -47,7 +48,7 @@ pub trait Inv<Result> {
 }
 
 /// A Dual type is commonly used for automatic differentiation.
-#[deriving(Eq)]
+#[deriving(Eq, Zero)]
 pub struct Dual2<T> {
 	/// The real part of Dual number.
 	x0 : T,
@@ -108,7 +109,7 @@ NormSq<T> for Dual2<T> {
 }
 
 /// A Complex number is commonly used for rotations in 2D.
-#[deriving(Eq)]
+#[deriving(Eq, Zero)]
 pub struct Complex<T> {
 	/// The real dimension of the complex number.
 	x0: T,
@@ -169,7 +170,7 @@ NormSq<T> for Complex<T> {
 }
 
 /// A Quaternion type is commonly used for rotations in 3D.
-#[deriving(Eq)]
+#[deriving(Eq, Zero)]
 pub struct Quaternion<T> {
 	/// The x-dimension of the quaternion.
 	x: T,
@@ -284,7 +285,7 @@ NormSq<T> for Quaternion<T> {
 }
 
 /// A Matrix4 is commonly used for linear transformations in 3D space.
-#[deriving(Eq)]
+#[deriving(Eq, Zero)]
 pub struct Matrix4<T> {
 	/// Element at first row and first column.
 	m11: T, 
