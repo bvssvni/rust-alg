@@ -16,18 +16,21 @@
 //	Vector		x	x	x	x	x
 
 //			Det	Inv	NormSq
-//	Dual2				x
+//	Dual2		x		x
 //	Complex				x
 //	Quaternion			x
 //	Matrix4		x	x	-
 //	Vector				x
 
 //			Eq	ApproxEq	Zero	One
-//	Dual2					x
-//	Complex					x
-//	Quaternion				x
-//	Matrix4			f64		x
-//	Vector						
+//	Dual2					x	x
+//	Complex					x	x
+//	Quaternion				x	x
+//	Matrix4			f64		x	x
+//	Vector					-	-
+
+
+use std::num::{Zero, One};
 
 /// Computes the square of length of algebraic type.
 pub trait NormSq<Result> {
@@ -108,6 +111,20 @@ NormSq<T> for Dual2<T> {
 	}
 }
 
+impl<T: Zero>
+Det<bool> for Dual2<T> {
+	fn det(&self) -> bool {
+		!self.x0.is_zero()
+	}
+}
+
+impl<T: One + Zero>
+One for Dual2<T> {
+	fn one() -> Dual2<T> {
+		Dual2 { x0: One::one(), x1: Zero::zero() }
+	}
+}
+
 /// A Complex number is commonly used for rotations in 2D.
 #[deriving(Eq, Zero)]
 pub struct Complex<T> {
@@ -166,6 +183,13 @@ impl<T: Mul<T, T> + Add<T, T>>
 NormSq<T> for Complex<T> {
 	fn norm_sq(&self) -> T {
 		self.x0 * self.x0 + self.x1 * self.x1
+	}
+}
+
+impl<T: One + Zero>
+One for Complex<T> {
+	fn one() -> Complex<T> {
+		Complex { x0: One::one(), x1: Zero::zero() }
 	}
 }
 
@@ -281,6 +305,16 @@ NormSq<T> for Quaternion<T> {
 		+ self.y * self.y
 		+ self.z * self.z
 		+ self.w * self.w
+	}
+}
+
+impl<T: One + Zero>
+One for Quaternion<T> {
+	fn one() -> Quaternion<T> {
+		Quaternion { x: Zero::zero(),
+			y: Zero::zero(),
+			z: Zero::zero(),
+			w: One::one() }
 	}
 }
 
@@ -683,6 +717,33 @@ ApproxEq<f64> for Matrix4<f64> {
 		&& self.m42.approx_eq_eps(&other.m42, approx_epsilon)
 		&& self.m43.approx_eq_eps(&other.m43, approx_epsilon)
 		&& self.m44.approx_eq_eps(&other.m44, approx_epsilon)
+	}
+}
+
+impl<T: Zero + One>
+One for Matrix4<T> {
+	fn one() -> Matrix4<T> {
+		Matrix4 {
+			m11: One::one(),
+			m12: Zero::zero(),
+			m13: Zero::zero(),
+			m14: Zero::zero(),
+
+			m21: Zero::zero(),
+			m22: One::one(),
+			m23: Zero::zero(),
+			m24: Zero::zero(),
+
+			m31: Zero::zero(),
+			m32: Zero::zero(),
+			m33: One::one(),
+			m34: Zero::zero(),
+
+			m41: Zero::zero(),
+			m42: Zero::zero(),
+			m43: Zero::zero(),
+			m44: One::one()
+		}
 	}
 }
 

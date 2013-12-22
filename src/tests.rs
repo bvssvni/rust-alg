@@ -1,6 +1,7 @@
 extern mod alg;
 
 use alg::{Dual2, Complex, Quaternion, NormSq, Matrix4, Det, Inv, Vector};
+use std::num::{One};
 
 #[test]
 fn test_dual_add() {
@@ -51,6 +52,20 @@ fn test_dual_normsq() {
 	let a = Dual2::new( 1f64, 2f64 );
 	let b = a.norm_sq();
 	assert_eq!( b, 1f64 );
+}
+
+#[test]
+fn test_dual_det() {
+	let a = Dual2::new( 0f64, 1f64 );
+	let b = a.det();
+	assert_eq!( b, false );
+}
+
+#[test]
+fn test_dual_one() {
+	let a: Dual2<f64> = One::one();
+	let b = Dual2::new( 1f64, 0f64 );
+	assert_eq!( a, b );
 }
 
 #[test]
@@ -106,6 +121,13 @@ fn test_complex_norm_sq() {
 }
 
 #[test]
+fn test_complex_one() {
+	let a: Complex<f64> = One::one();
+	let b = Complex::new( 1f64, 0f64 );
+	assert_eq!( a, b );
+}
+
+#[test]
 fn test_quaternion_add() {
 	let a = Quaternion::new( 1f64, 2f64, 3f64, 4f64 );
 	let b = Quaternion::new( 4f64, 3f64, 2f64, 1f64 );
@@ -156,6 +178,13 @@ fn test_quaternion_div() {
 	let n = b.norm_sq();
 	let d = Quaternion::new( -10f64 / n, -20f64 / n, 0f64 / n, 20f64 / n );
 	assert_eq!( c, d );
+}
+
+#[test]
+fn test_quaternion_one() {
+	let a: Quaternion<f64> = One::one();
+	let b = Quaternion::new( 0f64, 0f64, 0f64, 1f64 );
+	assert_eq!( a, b );
 }
 
 #[test]
@@ -284,6 +313,18 @@ fn test_matrix4_div() {
 	);
 	let b = a / a;
 	assert!( b.approx_eq(&a) );
+}
+
+#[test]
+fn test_matrix4_one() {
+	let a: Matrix4<f64> = One::one();
+	let b = Matrix4::new(
+		1f64, 0f64, 0f64, 0f64,
+		0f64, 1f64, 0f64, 0f64,
+		0f64, 0f64, 1f64, 0f64,
+		0f64, 0f64, 0f64, 1f64
+	);
+	assert_eq!( a, b );
 }
 
 #[test]
