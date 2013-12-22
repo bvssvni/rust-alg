@@ -1,6 +1,9 @@
 extern mod alg;
 
-use alg::{Dual2, Complex, Quaternion, NormSq, Matrix4, Det, Inv, Vector};
+use alg::{
+	Dual2, Complex, Quaternion, NormSq,
+	Matrix4, Det, Inv, Vector, Eps
+};
 use std::num::{One};
 
 #[test]
@@ -300,7 +303,7 @@ fn test_matrix4_inv() {
 	);
 	let b = a.inv();
 	let c = b.inv();
-	assert!( a.approx_eq(&c) );
+	assert!( a.close_eps(&c, &Eps::eps(0.0001f64)) );
 }
 
 #[test]
@@ -312,7 +315,7 @@ fn test_matrix4_div() {
 		0f64, 0f64, 0f64, 1f64
 	);
 	let b = a / a;
-	assert!( b.approx_eq(&a) );
+	assert!( b.close_eps(&a, &Eps::eps(0.00001f64)) );
 }
 
 #[test]
@@ -377,5 +380,26 @@ fn test_vector_norm_sq() {
 	let b = a.norm_sq();
 	let c = 14f64;
 	assert_eq!( b, c );
+}
+
+#[test]
+fn test_f64_eps() {
+	let a = 1f64;
+	let b = 1f64;
+	assert!( a.close_eps(&b, &Eps::eps(0f64)) );
+}
+
+#[test]
+fn test_f32_eps() {
+	let a = 1f32;
+	let b = 1f32;
+	assert!( a.close_eps(&b, &Eps::eps(0f64)) );
+}
+
+#[test]
+fn test_f32() {
+	let a = 1f32;
+	let b = 1f32;
+	assert!( a.approx_eq_eps(&b, &0.01f32) );
 }
 

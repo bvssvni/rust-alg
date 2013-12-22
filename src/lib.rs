@@ -22,13 +22,21 @@
 //	Matrix4		x	x	-
 //	Vector				x
 
-//			Eq	ApproxEq	Zero	One
-//	Dual2					x	x
-//	Complex					x	x
-//	Quaternion				x	x
-//	Matrix4			f64		x	x
-//	Vector					-	-
+//			Eq	Zero	One
+//	Dual2		x	x	x
+//	Complex		x	x	x
+//	Quaternion	x	x	x
+//	Matrix4		x	x	x
+//	Vector		x	-	-
 
+//			Eps	Scale
+//	Dual2
+//	Complex
+//	Quaternion
+//	Matrix4		x
+//	Vector
+//	f32		x
+//	f64		x
 
 use std::num::{Zero, One};
 
@@ -44,10 +52,27 @@ pub trait Det<Result> {
 	fn det(&self) -> Result;
 }
 
-/// Is implemented on structures that can be inverted.
+/// Implemented on structures that can be inverted.
 pub trait Inv<Result> {
 	/// Creates an inverted version of the structure.
 	fn inv(&self) -> Result;
+}
+
+/// Eps creates a value from f64 number.
+/// This can be used to check if two numbers are closer than the eps.
+pub trait Eps {
+	/// Returns the value used for evaluating approximate equivalence.
+	/// Creates an epsilon from a f64 number.
+	fn eps(eps: f64) -> Self;
+
+	/// Checks for equality with a custom approximate epsilon.
+	fn close_eps(&self, other: &Self, eps: &Self) -> bool;
+}
+
+/// Implemented on structures that can scale under multiplication.
+pub trait Scale {
+	/// Creates a scaling type that scales up under multiplication.
+	fn scale(&self, factor: f64) -> Self;
 }
 
 /// A Dual type is commonly used for automatic differentiation.
@@ -669,54 +694,52 @@ Div<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
 	}
 }
 
-impl
-ApproxEq<f64> for Matrix4<f64> {
-	fn approx_epsilon() -> f64 {
-		std::f64::EPSILON
+impl<T: Eps>
+Eps for Matrix4<T> {
+	fn eps(eps: f64) -> Matrix4<T> {
+		Matrix4 {
+			m11: Eps::eps(eps),
+			m12: Eps::eps(eps),
+			m13: Eps::eps(eps),
+			m14: Eps::eps(eps),
+
+			m21: Eps::eps(eps),
+			m22: Eps::eps(eps),
+			m23: Eps::eps(eps),
+			m24: Eps::eps(eps),
+
+			m31: Eps::eps(eps),
+			m32: Eps::eps(eps),
+			m33: Eps::eps(eps),
+			m34: Eps::eps(eps),
+
+			m41: Eps::eps(eps),
+			m42: Eps::eps(eps),
+			m43: Eps::eps(eps),
+			m44: Eps::eps(eps),
+		}
 	}
 
-	fn approx_eq(&self, other: &Matrix4<f64>) -> bool {
-		self.m11.approx_eq(&other.m11)
-		&& self.m12.approx_eq(&other.m12)
-		&& self.m13.approx_eq(&other.m13)
-		&& self.m14.approx_eq(&other.m14)
+	fn close_eps(&self, other: &Matrix4<T>, eps: &Matrix4<T>) -> bool {
+		self.m11.close_eps(&other.m11, &eps.m11)
+		&& self.m12.close_eps(&other.m12, &eps.m12)
+		&& self.m13.close_eps(&other.m13, &eps.m13)
+		&& self.m14.close_eps(&other.m14, &eps.m14)
 
-		&& self.m21.approx_eq(&other.m21)
-		&& self.m22.approx_eq(&other.m22)
-		&& self.m23.approx_eq(&other.m23)
-		&& self.m24.approx_eq(&other.m24)
+		&& self.m21.close_eps(&other.m21, &eps.m21)
+		&& self.m22.close_eps(&other.m22, &eps.m22)
+		&& self.m23.close_eps(&other.m23, &eps.m23)
+		&& self.m24.close_eps(&other.m24, &eps.m24)
 
-		&& self.m31.approx_eq(&other.m31)
-		&& self.m32.approx_eq(&other.m32)
-		&& self.m33.approx_eq(&other.m33)
-		&& self.m34.approx_eq(&other.m34)
+		&& self.m31.close_eps(&other.m31, &eps.m31)
+		&& self.m32.close_eps(&other.m32, &eps.m32)
+		&& self.m33.close_eps(&other.m33, &eps.m33)
+		&& self.m34.close_eps(&other.m34, &eps.m34)
 
-		&& self.m41.approx_eq(&other.m41)
-		&& self.m42.approx_eq(&other.m42)
-		&& self.m43.approx_eq(&other.m43)
-		&& self.m44.approx_eq(&other.m44)
-	}
-
-	fn approx_eq_eps(&self, other: &Matrix4<f64>, approx_epsilon: &f64) -> bool {
-		self.m11.approx_eq_eps(&other.m11, approx_epsilon)
-		&& self.m12.approx_eq_eps(&other.m12, approx_epsilon)
-		&& self.m13.approx_eq_eps(&other.m13, approx_epsilon)
-		&& self.m14.approx_eq_eps(&other.m14, approx_epsilon)
-
-		&& self.m21.approx_eq_eps(&other.m21, approx_epsilon)
-		&& self.m22.approx_eq_eps(&other.m22, approx_epsilon)
-		&& self.m23.approx_eq_eps(&other.m23, approx_epsilon)
-		&& self.m24.approx_eq_eps(&other.m24, approx_epsilon)
-
-		&& self.m31.approx_eq_eps(&other.m31, approx_epsilon)
-		&& self.m32.approx_eq_eps(&other.m32, approx_epsilon)
-		&& self.m33.approx_eq_eps(&other.m33, approx_epsilon)
-		&& self.m34.approx_eq_eps(&other.m34, approx_epsilon)
-
-		&& self.m41.approx_eq_eps(&other.m41, approx_epsilon)
-		&& self.m42.approx_eq_eps(&other.m42, approx_epsilon)
-		&& self.m43.approx_eq_eps(&other.m43, approx_epsilon)
-		&& self.m44.approx_eq_eps(&other.m44, approx_epsilon)
+		&& self.m41.close_eps(&other.m41, &eps.m41)
+		&& self.m42.close_eps(&other.m42, &eps.m42)
+		&& self.m43.close_eps(&other.m43, &eps.m43)
+		&& self.m44.close_eps(&other.m44, &eps.m44)
 	}
 }
 
@@ -862,4 +885,35 @@ NormSq<T> for Vector<T> {
 	}
 }
 
+impl Eps for f64 {
+	fn eps(eps: f64) -> f64 {
+		eps
+	}
+
+	fn close_eps(&self, other: &f64, eps: &f64) -> bool {
+		let a = *self - *other;
+		let b = if a < 0f64 {
+				-a
+			} else {
+				a
+			};
+		b <= *eps
+	}
+}
+
+impl Eps for f32 {
+	fn eps(eps: f64) -> f32 {
+		eps as f32
+	}
+
+	fn close_eps(&self, other: &f32, eps: &f32) -> bool {
+		let a = *self - *other;
+		let b = if a < 0f32 {
+				-a
+			} else {
+				a
+			};
+		b <= *eps
+	}
+}
 
