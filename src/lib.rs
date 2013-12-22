@@ -3,20 +3,24 @@
 #[crate_type="rlib"];
 
 #[deny(non_camel_case_types)];
-// #[deny(missing_doc)];
+#[deny(missing_doc)];
 #[feature(managed_boxes)];
 
 //! Library for Algebra.
 
-//			Add	Sub	Mul	Div	Neg	NormSq
-//	Dual2		x	x	x	x	x	x
-//	Complex		x	x	x	x	x	x
-//	Quaternion	x	x	x	x	x	x
-//	Matrix4		x	x	x	w	x	-
-//	Vector		x	x	x	x	x	x
+//			Add	Sub	Mul	Div	Neg
+//	Dual2		x	x	x	x	x
+//	Complex		x	x	x	x	x
+//	Quaternion	x	x	x	x	x
+//	Matrix4		x	x	x	w	x
+//	Vector		x	x	x	x	x
 
-//			Det	Inv
-//	Matrix4		x	x
+//			Det	Inv	NormSq
+//	Dual2				x
+//	Complex				x
+//	Quaternion			x
+//	Matrix4		x	x	-
+//	Vector				x
 
 //			ApproxEq
 //	Dual2
@@ -26,24 +30,33 @@
 
 /// Computes the square of length of algebraic type.
 pub trait NormSq<Result> {
+	/// Computes the square of the norm/length.
 	fn norm_sq(&self) -> Result;
 }
 
+/// Is implemented on structures that has a determinant.
 pub trait Det<Result> {
+	/// Calculates the determinant of the structure.
 	fn det(&self) -> Result;
 }
 
+/// Is implemented on structures that can be inverted.
 pub trait Inv<Result> {
+	/// Creates an inverted version of the structure.
 	fn inv(&self) -> Result;
 }
 
+/// A Dual type is commonly used for automatic differentiation.
 #[deriving(Eq)]
 pub struct Dual2<T> {
+	/// The real part of Dual number.
 	x0 : T,
+	/// The dual part of Dual number.
 	x1 : T,
 }
 
 impl<T> Dual2<T> {
+	/// Constructs a new dual number.
 	pub fn new(x0: T, x1: T) -> Dual2<T> {
 		Dual2 { x0: x0, x1: x1 }
 	}
@@ -94,13 +107,17 @@ NormSq<T> for Dual2<T> {
 	}
 }
 
+/// A Complex number is commonly used for rotations in 2D.
 #[deriving(Eq)]
 pub struct Complex<T> {
+	/// The real dimension of the complex number.
 	x0: T,
+	/// The imaginary dimension of the complex number.
 	x1: T,
 }
 
 impl<T> Complex<T> {
+	/// Creates a new Complex number.
 	pub fn new(x0: T, x1: T) -> Complex<T> {
 		Complex { x0: x0, x1: x1 }
 	}
@@ -151,15 +168,22 @@ NormSq<T> for Complex<T> {
 	}
 }
 
+/// A Quaternion type is commonly used for rotations in 3D.
 #[deriving(Eq)]
 pub struct Quaternion<T> {
+	/// The x-dimension of the quaternion.
 	x: T,
+	/// The y-dimension of the quaternion.
 	y: T,
+	/// The z-dimension of the quaternion.
 	z: T,
+	/// The scalar component of the quaternion.
 	w: T,
 }
 
 impl<T> Quaternion<T> {
+	/// Creates a new Quaternion.
+	/// Notice that the scalar component is after the vector.
 	pub fn new(x: T, y: T, z: T, w: T) -> Quaternion<T> {
 		Quaternion { x: x, y: y, z: z, w: w }
 	}
@@ -259,15 +283,48 @@ NormSq<T> for Quaternion<T> {
 	}
 }
 
+/// A Matrix4 is commonly used for linear transformations in 3D space.
 #[deriving(Eq)]
 pub struct Matrix4<T> {
-	m11: T, m12: T, m13: T, m14: T,
-	m21: T, m22: T, m23: T, m24: T,
-	m31: T, m32: T, m33: T, m34: T,
-	m41: T, m42: T, m43: T, m44: T
+	/// Element at first row and first column.
+	m11: T, 
+	/// Element at first row and second column.
+	m12: T, 
+	/// Element at first row and third column.
+	m13: T, 
+	/// Element at first row and fourth column.
+	m14: T,
+	
+	/// Element at second row and first column.
+	m21: T, 
+	/// Element at second row and second column.
+	m22: T, 
+	/// Element at second row and third column.
+	m23: T, 
+	/// Element at second row and fourth column.
+	m24: T,
+	
+	/// Element at third row and first column.
+	m31: T, 
+	/// Element at third row and second column.
+	m32: T, 
+	/// Element at third row and third column.
+	m33: T, 
+	/// Element at third row and fourth column.
+	m34: T,
+	
+	/// Element at fourth row and first column.
+	m41: T, 
+	/// Element at fourth row and second column.
+	m42: T, 
+	/// Element at fourt row and third column.
+	m43: T, 
+	/// Element at fourth row and fourth column.
+	m44: T
 }
 
 impl<T> Matrix4<T> {
+	/// Creates a new matrix with elements.
 	pub fn new(
 		m11: T, m12: T, m13: T, m14: T,
 		m21: T, m22: T, m23: T, m24: T,
@@ -628,12 +685,16 @@ ApproxEq<f64> for Matrix4<f64> {
 	}
 }
 
+/// A Vector type contains a list of values.
+/// It is commonly used for list operations.
 #[deriving(Eq)]
 pub struct Vector<T> {
+	/// Contains the items in the vector.
 	x: ~[T],
 }
 
 impl<T> Vector<T> {
+	/// Creates a new vector from a list of values.
 	pub fn new(x: ~[T]) -> Vector<T> {
 		Vector { x: x }
 	}

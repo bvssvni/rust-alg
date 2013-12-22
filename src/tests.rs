@@ -338,14 +338,3 @@ fn test_vector_norm_sq() {
 	assert_eq!( b, c );
 }
 
-fn main() {
-	let a = Matrix4::new(
-		2f64, 3f64, 5f64, 7f64,
-		11f64, 13f64, 17f64, 19f64,
-		23f64,	29f64,	31f64,	37f64,
-		41f64,	43f64,	47f64,	51f64
-	);
-	let b = a.inv();
-	let c = b.inv();
-	println!("{:?}", c);
-}
