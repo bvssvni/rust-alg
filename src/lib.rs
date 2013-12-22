@@ -13,6 +13,7 @@
 //	Complex		x	x	x	x	x	x
 //	Quaternion	x	x	x	x	x	x
 //	Matrix4		x	x	x	w	x	-
+//	Vector		x	x	x	x	x	x
 
 //			Det	Inv
 //	Matrix4		x	x
@@ -626,4 +627,116 @@ ApproxEq<f64> for Matrix4<f64> {
 		&& self.m44.approx_eq_eps(&other.m44, approx_epsilon)
 	}
 }
+
+#[deriving(Eq)]
+pub struct Vector<T> {
+	x: ~[T],
+}
+
+impl<T> Vector<T> {
+	pub fn new(x: ~[T]) -> Vector<T> {
+		Vector { x: x }
+	}
+}
+
+impl<T: Add<T, T>>
+Add<Vector<T>, Vector<T>> for Vector<T> {
+	fn add(&self, rhs: &Vector<T>) -> Vector<T> {
+		if self.x.len() != rhs.x.len() {
+			Vector { x: ~[] }
+		} else {
+			let mut res: ~[T] = ~[];
+			let mut i = 0;
+			let n = self.x.len();
+			while i < n {
+				res.push(self.x[i] + rhs.x[i]);
+				i += 1;
+			}
+
+			Vector { x: res }
+		}
+	}
+}
+
+impl<T: Sub<T, T>>
+Sub<Vector<T>, Vector<T>> for Vector<T> {
+	fn sub(&self, rhs: &Vector<T>) -> Vector<T> {
+		if self.x.len() != rhs.x.len() {
+			Vector { x: ~[] }
+		} else {
+			let mut res: ~[T] = ~[];
+			let mut i = 0;
+			let n = self.x.len();
+			while i < n {
+				res.push(self.x[i] - rhs.x[i]);
+				i += 1;
+			}
+
+			Vector { x: res }
+		}
+	}
+}
+
+impl<T: Mul<T, T>>
+Mul<Vector<T>, Vector<T>> for Vector<T> {
+	fn mul(&self, rhs: &Vector<T>) -> Vector<T> {
+		if self.x.len() != rhs.x.len() {
+			Vector { x: ~[] }
+		} else {
+			let mut res: ~[T] = ~[];
+			let mut i = 0;
+			let n = self.x.len();
+			while i < n {
+				res.push(self.x[i] * rhs.x[i]);
+				i += 1;
+			}
+
+			Vector { x: res }
+		}
+	}
+}
+
+impl<T: Div<T, T>>
+Div<Vector<T>, Vector<T>> for Vector<T> {
+	fn div(&self, rhs: &Vector<T>) -> Vector<T> {
+		if self.x.len() != rhs.x.len() {
+			Vector { x: ~[] }
+		} else {
+			let mut res: ~[T] = ~[];
+			let mut i = 0;
+			let n = self.x.len();
+			while i < n {
+				res.push(self.x[i] / rhs.x[i]);
+				i += 1;
+			}
+
+			Vector { x: res }
+		}
+	}
+}
+
+impl<T: Neg<T>>
+Neg<Vector<T>> for Vector<T> {
+	fn neg(&self) -> Vector<T> {
+		let mut res: ~[T] = ~[];
+		for x in self.x.iter() {
+			res.push(-x);
+		}
+
+		Vector { x: res }
+	}
+}
+
+impl<T: Add<T, T> + Mul<T, T> + Clone>
+NormSq<T> for Vector<T> {
+	fn norm_sq(&self) -> T {
+		let mut res = self.x[0].clone();
+		for x in self.x.iter().skip(1) {
+			res = res + *x * *x;
+		}
+
+		res
+	}
+}
+
 

@@ -1,6 +1,6 @@
 extern mod alg;
 
-use alg::{Dual2, Complex, Quaternion, NormSq, Matrix4, Det, Inv};
+use alg::{Dual2, Complex, Quaternion, NormSq, Matrix4, Det, Inv, Vector};
 
 #[test]
 fn test_dual_add() {
@@ -284,6 +284,58 @@ fn test_matrix4_div() {
 	);
 	let b = a / a;
 	assert!( b.approx_eq(&a) );
+}
+
+#[test]
+fn test_vector_add() {
+	let a = Vector::new( ~[1, 2, 3] );
+	let b = Vector::new( ~[3, 2, 1] );
+	let c = a + b;
+	let d = Vector::new( ~[4, 4, 4] );
+	assert_eq!( c, d );
+}
+
+#[test]
+fn test_vector_sub() {
+	let a = Vector::new( ~[1, 2, 3] );
+	let b = Vector::new( ~[3, 2, 1] );
+	let c = a - b;
+	let d = Vector::new( ~[-2, 0, 2] );
+	assert_eq!( c, d );
+}
+
+#[test]
+fn test_vector_mul() {
+	let a = Vector::new( ~[1, 2, 3] );
+	let b = Vector::new( ~[3, 2, 1] );
+	let c = a * b;
+	let d = Vector::new( ~[3, 4, 3] );
+	assert_eq!( c, d );
+}
+
+#[test]
+fn test_vector_div() {
+	let a = Vector::new( ~[1f64, 2f64, 3f64] );
+	let b = Vector::new( ~[3f64, 2f64, 1f64] );
+	let c = a / b;
+	let d = Vector::new( ~[1f64 / 3f64, 1f64, 3f64] );
+	assert_eq!( c, d );
+}
+
+#[test]
+fn test_vector_neg() {
+	let a = Vector::new( ~[1f64, 2f64, 3f64] );
+	let b = -a;
+	let c = Vector::new( ~[-1f64, -2f64, -3f64] );
+	assert_eq!( b, c );
+}
+
+#[test]
+fn test_vector_norm_sq() {
+	let a = Vector::new( ~[1f64, 2f64, 3f64] );
+	let b = a.norm_sq();
+	let c = 14f64;
+	assert_eq!( b, c );
 }
 
 fn main() {
