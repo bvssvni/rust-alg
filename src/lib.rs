@@ -1,5 +1,4 @@
-#[link(name="alg")];
-#[pkgid = "alg#0.1"];
+#[crate_id = "alg#0.1"];
 #[crate_type="rlib"];
 
 #[deny(non_camel_case_types)];
@@ -61,12 +60,8 @@ pub trait Inv<Result> {
 /// Eps creates a value from f64 number.
 /// This can be used to check if two numbers are closer than the eps.
 pub trait Eps {
-	/// Returns the value used for evaluating approximate equivalence.
-	/// Creates an epsilon from a f64 number.
-	fn eps(eps: f64) -> Self;
-
 	/// Checks for equality with a custom approximate epsilon.
-	fn close_eps(&self, other: &Self, eps: &Self) -> bool;
+	fn close_eps(&self, other: &Self, eps: f64) -> bool;
 }
 
 /// Implemented on structures that can scale under multiplication.
@@ -696,50 +691,26 @@ Div<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
 
 impl<T: Eps>
 Eps for Matrix4<T> {
-	fn eps(eps: f64) -> Matrix4<T> {
-		Matrix4 {
-			m11: Eps::eps(eps),
-			m12: Eps::eps(eps),
-			m13: Eps::eps(eps),
-			m14: Eps::eps(eps),
+	fn close_eps(&self, other: &Matrix4<T>, eps: f64) -> bool {
+		self.m11.close_eps(&other.m11, eps)
+		&& self.m12.close_eps(&other.m12, eps)
+		&& self.m13.close_eps(&other.m13, eps)
+		&& self.m14.close_eps(&other.m14, eps)
 
-			m21: Eps::eps(eps),
-			m22: Eps::eps(eps),
-			m23: Eps::eps(eps),
-			m24: Eps::eps(eps),
+		&& self.m21.close_eps(&other.m21, eps)
+		&& self.m22.close_eps(&other.m22, eps)
+		&& self.m23.close_eps(&other.m23, eps)
+		&& self.m24.close_eps(&other.m24, eps)
 
-			m31: Eps::eps(eps),
-			m32: Eps::eps(eps),
-			m33: Eps::eps(eps),
-			m34: Eps::eps(eps),
+		&& self.m31.close_eps(&other.m31, eps)
+		&& self.m32.close_eps(&other.m32, eps)
+		&& self.m33.close_eps(&other.m33, eps)
+		&& self.m34.close_eps(&other.m34, eps)
 
-			m41: Eps::eps(eps),
-			m42: Eps::eps(eps),
-			m43: Eps::eps(eps),
-			m44: Eps::eps(eps),
-		}
-	}
-
-	fn close_eps(&self, other: &Matrix4<T>, eps: &Matrix4<T>) -> bool {
-		self.m11.close_eps(&other.m11, &eps.m11)
-		&& self.m12.close_eps(&other.m12, &eps.m12)
-		&& self.m13.close_eps(&other.m13, &eps.m13)
-		&& self.m14.close_eps(&other.m14, &eps.m14)
-
-		&& self.m21.close_eps(&other.m21, &eps.m21)
-		&& self.m22.close_eps(&other.m22, &eps.m22)
-		&& self.m23.close_eps(&other.m23, &eps.m23)
-		&& self.m24.close_eps(&other.m24, &eps.m24)
-
-		&& self.m31.close_eps(&other.m31, &eps.m31)
-		&& self.m32.close_eps(&other.m32, &eps.m32)
-		&& self.m33.close_eps(&other.m33, &eps.m33)
-		&& self.m34.close_eps(&other.m34, &eps.m34)
-
-		&& self.m41.close_eps(&other.m41, &eps.m41)
-		&& self.m42.close_eps(&other.m42, &eps.m42)
-		&& self.m43.close_eps(&other.m43, &eps.m43)
-		&& self.m44.close_eps(&other.m44, &eps.m44)
+		&& self.m41.close_eps(&other.m41, eps)
+		&& self.m42.close_eps(&other.m42, eps)
+		&& self.m43.close_eps(&other.m43, eps)
+		&& self.m44.close_eps(&other.m44, eps)
 	}
 }
 
@@ -886,34 +857,26 @@ NormSq<T> for Vector<T> {
 }
 
 impl Eps for f64 {
-	fn eps(eps: f64) -> f64 {
-		eps
-	}
-
-	fn close_eps(&self, other: &f64, eps: &f64) -> bool {
+	fn close_eps(&self, other: &f64, eps: f64) -> bool {
 		let a = *self - *other;
 		let b = if a < 0f64 {
 				-a
 			} else {
 				a
 			};
-		b <= *eps
+		b <= eps
 	}
 }
 
 impl Eps for f32 {
-	fn eps(eps: f64) -> f32 {
-		eps as f32
-	}
-
-	fn close_eps(&self, other: &f32, eps: &f32) -> bool {
+	fn close_eps(&self, other: &f32, eps: f64) -> bool {
 		let a = *self - *other;
 		let b = if a < 0f32 {
 				-a
 			} else {
 				a
 			};
-		b <= *eps
+		b <= eps as f32
 	}
 }
 

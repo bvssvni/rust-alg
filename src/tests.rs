@@ -303,7 +303,7 @@ fn test_matrix4_inv() {
 	);
 	let b = a.inv();
 	let c = b.inv();
-	assert!( a.close_eps(&c, &Eps::eps(0.0001f64)) );
+	assert!( a.close_eps(&c, 0.0001f64) );
 }
 
 #[test]
@@ -315,7 +315,7 @@ fn test_matrix4_div() {
 		0f64, 0f64, 0f64, 1f64
 	);
 	let b = a / a;
-	assert!( b.close_eps(&a, &Eps::eps(0.00001f64)) );
+	assert!( b.close_eps(&a, 0.00001f64) );
 }
 
 #[test]
@@ -386,14 +386,14 @@ fn test_vector_norm_sq() {
 fn test_f64_eps() {
 	let a = 1f64;
 	let b = 1f64;
-	assert!( a.close_eps(&b, &Eps::eps(0f64)) );
+	assert!( a.close_eps(&b, 0f64) );
 }
 
 #[test]
 fn test_f32_eps() {
 	let a = 1f32;
 	let b = 1f32;
-	assert!( a.close_eps(&b, &Eps::eps(0f64)) );
+	assert!( a.close_eps(&b, 0f64) );
 }
 
 #[test]
