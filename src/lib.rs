@@ -29,11 +29,11 @@
 //	Vector		x	-	-
 
 //			Eps	Scale
-//	Dual2
-//	Complex
-//	Quaternion
+//	Dual2		x
+//	Complex		x
+//	Quaternion	x
 //	Matrix4		x
-//	Vector
+//	Vector		x
 //	f32		x
 //	f64		x
 
@@ -145,6 +145,15 @@ One for Dual2<T> {
 	}
 }
 
+impl<T: Eps>
+Eps for Dual2<T> {
+	fn close_eps(&self, other: &Dual2<T>, eps: f64) -> bool {
+		if !self.x0.close_eps(&other.x0, eps) { false }
+		else if !self.x1.close_eps(&other.x1, eps) { false }
+		else { true }
+	}
+}
+
 /// A Complex number is commonly used for rotations in 2D.
 #[deriving(Eq, Zero)]
 pub struct Complex<T> {
@@ -210,6 +219,15 @@ impl<T: One + Zero>
 One for Complex<T> {
 	fn one() -> Complex<T> {
 		Complex { x0: One::one(), x1: Zero::zero() }
+	}
+}
+
+impl<T: Eps>
+Eps for Complex<T> {
+	fn close_eps(&self, other: &Complex<T>, eps: f64) -> bool {
+		if ( !self.x0.close_eps(&other.x0, eps) ) { false }
+		else if ( !self.x1.close_eps(&other.x1, eps) ) { false }
+		else { true }
 	}
 }
 
@@ -335,6 +353,17 @@ One for Quaternion<T> {
 			y: Zero::zero(),
 			z: Zero::zero(),
 			w: One::one() }
+	}
+}
+
+impl<T: Eps>
+Eps for Quaternion<T> {
+	fn close_eps(&self, other: &Quaternion<T>, eps: f64) -> bool {
+		if ( !self.x.close_eps(&other.x, eps) ) { false }
+		else if ( !self.y.close_eps(&other.y, eps) ) { false }
+		else if ( !self.z.close_eps(&other.z, eps) ) { false }
+		else if ( !self.w.close_eps(&other.w, eps) ) { false }
+		else { true }
 	}
 }
 
@@ -853,6 +882,20 @@ NormSq<T> for Vector<T> {
 		}
 
 		res
+	}
+}
+
+impl<T: Eps> Eps for Vector<T> {
+	fn close_eps(&self, other: &Vector<T>, eps: f64) -> bool {
+		let n = self.x.len();
+		let m = other.x.len();
+		if n != m { fail!("Vectors not of same length"); }
+
+		if range(0, n).any(|i| !self.x[i].close_eps(&other.x[i], eps)) {
+			false
+		} else {
+			true
+		}
 	}
 }
 

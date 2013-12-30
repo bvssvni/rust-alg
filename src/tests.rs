@@ -72,6 +72,17 @@ fn test_dual_one() {
 }
 
 #[test]
+fn test_dual_eps() {
+	let a = Dual2::new( 1f64, 2f64 );
+	let b = Dual2::new( 1f64, 2f64 );
+	assert!( a.close_eps(&b, 0f64) );
+	let c = Dual2::new( 2f64, 2f64 );
+	assert!( !a.close_eps(&c, 0f64) );
+	let d = Dual2::new( 1f64, 0f64 );
+	assert!( !a.close_eps(&d, 0f64) );
+}
+
+#[test]
 fn test_complex_add() {
 	let a = Complex::new( 1f64, 2f64 );
 	let b = Complex::new( 2f64, 1f64 );
@@ -128,6 +139,17 @@ fn test_complex_one() {
 	let a: Complex<f64> = One::one();
 	let b = Complex::new( 1f64, 0f64 );
 	assert_eq!( a, b );
+}
+
+#[test]
+fn test_complex_eps() {
+	let a = Complex::new( 1f64, 2f64 );
+	let b = Complex::new( 1f64, 2f64 );
+	assert!( a.close_eps(&b, 0f64) );
+	let c = Complex::new( 2f64, 2f64 );
+	assert!( !a.close_eps(&c, 0f64) );
+	let d = Complex::new( 1f64, 0f64 );
+	assert!( !a.close_eps(&d, 0f64) );
 }
 
 #[test]
@@ -188,6 +210,21 @@ fn test_quaternion_one() {
 	let a: Quaternion<f64> = One::one();
 	let b = Quaternion::new( 0f64, 0f64, 0f64, 1f64 );
 	assert_eq!( a, b );
+}
+
+#[test]
+fn test_quaternion_eps() {
+	let a = Quaternion::new( 1f64, 2f64, 3f64, 4f64 );
+	let b = Quaternion::new( 1f64, 2f64, 3f64, 4f64 );
+	assert!( a.close_eps(&b, 0f64) );
+	let b = Quaternion::new( 0f64, 2f64, 3f64, 4f64 );
+	assert!( !a.close_eps(&b, 0f64) );
+	let b = Quaternion::new( 1f64, 0f64, 3f64, 4f64 );
+	assert!( !a.close_eps(&b, 0f64) );
+	let b = Quaternion::new( 1f64, 2f64, 0f64, 4f64 );
+	assert!( !a.close_eps(&b, 0f64) );	
+	let b = Quaternion::new( 1f64, 2f64, 3f64, 0f64 );
+	assert!( !a.close_eps(&b, 0f64) );
 }
 
 #[test]
@@ -363,7 +400,7 @@ fn test_vector_div() {
 	let b = Vector::new( ~[3f64, 2f64, 1f64] );
 	let c = a / b;
 	let d = Vector::new( ~[1f64 / 3f64, 1f64, 3f64] );
-	assert_eq!( c, d );
+	assert!( c.close_eps(&d, 0f64) );
 }
 
 #[test]
