@@ -15,11 +15,13 @@
 //	Vector		x	x	x	x	x
 
 //			Det	Inv	NormSq
-//	Dual2		x		x
-//	Complex				x
+//	Dual2		x	x	x
+//	Complex		x		x
 //	Quaternion			x
 //	Matrix4		x	x	-
 //	Vector				x
+//	f32			x
+//	f64			x
 
 //			Eq	Zero	One
 //	Dual2		x	x	x
@@ -46,6 +48,8 @@ pub trait NormSq<Result> {
 }
 
 /// Is implemented on structures that has a determinant.
+/// A determinant is a value that tells whether the structure is invertible.
+/// If the determinant is zero the structure is not invertible.
 pub trait Det<Result> {
 	/// Calculates the determinant of the structure.
 	fn det(&self) -> Result;
@@ -117,6 +121,15 @@ Div<Dual2<T>, Dual2<T>> for Dual2<T> {
 	}
 }
 
+impl<T: Div<T, T> + Neg<T> + Mul<T, T> + Inv<T>>
+Inv<Dual2<T>> for Dual2<T> {
+	fn inv(&self) -> Dual2<T> {
+		let b2 = self.x0 * self.x0;
+		Dual2 { x0: self.x0.inv(),
+			x1: -self.x1 / b2 }
+	}
+}
+
 impl<T: Neg<T>>
 Neg<Dual2<T>> for Dual2<T> {
 	fn neg(&self) -> Dual2<T> {
@@ -131,10 +144,10 @@ NormSq<T> for Dual2<T> {
 	}
 }
 
-impl<T: Zero>
-Det<bool> for Dual2<T> {
-	fn det(&self) -> bool {
-		!self.x0.is_zero()
+impl<T: Mul<T, T>>
+Det<T> for Dual2<T> {
+	fn det(&self) -> T {
+		self.x0 * self.x0
 	}
 }
 
@@ -228,6 +241,13 @@ Eps for Complex<T> {
 		if ( !self.x0.close_eps(&other.x0, eps) ) { false }
 		else if ( !self.x1.close_eps(&other.x1, eps) ) { false }
 		else { true }
+	}
+}
+
+impl<T: Mul<T, T> + Add<T, T>>
+Det<T> for Complex<T> {
+	fn det(&self) -> T {
+		self.x0 * self.x0 + self.x1 * self.x1
 	}
 }
 
@@ -899,6 +919,12 @@ impl<T: Eps> Eps for Vector<T> {
 	}
 }
 
+impl Inv<f64> for f64 {
+	fn inv(&self) -> f64 {
+		1f64 / *self
+	}
+}
+
 impl Eps for f64 {
 	fn close_eps(&self, other: &f64, eps: f64) -> bool {
 		let a = *self - *other;
@@ -908,6 +934,12 @@ impl Eps for f64 {
 				a
 			};
 		b <= eps
+	}
+}
+
+impl Inv<f32> for f32 {
+	fn inv(&self) -> f32 {
+		1f32 / *self
 	}
 }
 

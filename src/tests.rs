@@ -43,6 +43,19 @@ fn test_dual_div() {
 }
 
 #[test]
+fn test_dual_inv() {
+	let a = Dual2::new( 1f64, 2f64 );
+	let b = a.inv();
+	let c = Dual2::new( 1f64, -2f64 );
+	assert_eq!( b, c );
+
+	let a = Dual2::new( 1f32, 2f32 );
+	let b = a.inv();
+	let c = Dual2::new( 1f32, -2f32 );
+	assert_eq!( b, c );
+}
+
+#[test]
 fn test_dual_neg() {
 	let a = Dual2::new( 1f64, 2f64 );
 	let b = -a;
@@ -61,7 +74,7 @@ fn test_dual_normsq() {
 fn test_dual_det() {
 	let a = Dual2::new( 0f64, 1f64 );
 	let b = a.det();
-	assert_eq!( b, false );
+	assert_eq!( b, 0f64 );
 }
 
 #[test]
@@ -150,6 +163,13 @@ fn test_complex_eps() {
 	assert!( !a.close_eps(&c, 0f64) );
 	let d = Complex::new( 1f64, 0f64 );
 	assert!( !a.close_eps(&d, 0f64) );
+}
+
+#[test]
+fn test_complex_det() {
+	let a = Complex::new( 0f64, 0f64 );
+	let b = a.det();
+	assert_eq!( b, 0f64 );
 }
 
 #[test]
