@@ -2,9 +2,16 @@ extern mod alg;
 
 use alg::{
 	Dual2, Complex, Quaternion, NormSq,
-	Matrix4, Det, Inv, Vector, Eps
+	Matrix4, Det, Inv, Vector, Eps, Scale
 };
 use std::num::{One};
+
+#[test]
+fn test_dual_scale() {
+	let a: Dual2<f64> = Scale::scale( 2f64 );
+	let b = Dual2::new( 2f64, 0f64 );
+	assert_eq!( a, b );
+}
 
 #[test]
 fn test_dual_add() {
@@ -96,6 +103,13 @@ fn test_dual_eps() {
 }
 
 #[test]
+fn test_complex_scale() {
+	let a: Complex<f64> = Scale::scale(2f64);
+	let b = Complex::new( 2f64, 0f64 );
+	assert_eq!( a, b );
+}
+
+#[test]
 fn test_complex_add() {
 	let a = Complex::new( 1f64, 2f64 );
 	let b = Complex::new( 2f64, 1f64 );
@@ -181,6 +195,13 @@ fn test_complex_det() {
 }
 
 #[test]
+fn test_quaternion_scale() {
+	let a: Quaternion<f64> = Scale::scale( 2f64 );
+	let b = Quaternion::new( 0f64, 0f64, 0f64, 2f64 );
+	assert_eq!( a, b );
+}
+
+#[test]
 fn test_quaternion_add() {
 	let a = Quaternion::new( 1f64, 2f64, 3f64, 4f64 );
 	let b = Quaternion::new( 4f64, 3f64, 2f64, 1f64 );
@@ -260,6 +281,18 @@ fn test_quaternion_eps() {
 	assert!( !a.close_eps(&b, 0f64) );	
 	let b = Quaternion::new( 1f64, 2f64, 3f64, 0f64 );
 	assert!( !a.close_eps(&b, 0f64) );
+}
+
+#[test]
+fn test_matrix4_scale() {
+	let a: Matrix4<f64> = Scale::scale( 2f64 );
+	let b = Matrix4::new(
+		2f64, 0f64, 0f64, 0f64,
+		0f64, 2f64, 0f64, 0f64,
+		0f64, 0f64, 2f64, 0f64,
+		0f64, 0f64, 0f64, 2f64
+	);
+	assert_eq!( a, b );
 }
 
 #[test]

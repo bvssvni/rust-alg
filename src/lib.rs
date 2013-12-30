@@ -31,13 +31,13 @@
 //	Vector		x	-	-
 
 //			Eps	Scale
-//	Dual2		x
-//	Complex		x
-//	Quaternion	x
-//	Matrix4		x
-//	Vector		x
-//	f32		x
-//	f64		x
+//	Dual2		x	x
+//	Complex		x	x
+//	Quaternion	x	x
+//	Matrix4		x	x
+//	Vector		x	-
+//	f32		x	-
+//	f64		x	-
 
 use std::num::{Zero, One};
 
@@ -69,9 +69,9 @@ pub trait Eps {
 }
 
 /// Implemented on structures that can scale under multiplication.
-pub trait Scale {
+pub trait Scale<T> {
 	/// Creates a scaling type that scales up under multiplication.
-	fn scale(&self, factor: f64) -> Self;
+	fn scale(factor: T) -> Self;
 }
 
 /// A Dual type is commonly used for automatic differentiation.
@@ -87,6 +87,13 @@ impl<T> Dual2<T> {
 	/// Constructs a new dual number.
 	pub fn new(x0: T, x1: T) -> Dual2<T> {
 		Dual2 { x0: x0, x1: x1 }
+	}
+}
+
+impl<T: Zero>
+Scale<T> for Dual2<T> {
+	fn scale(factor: T) -> Dual2<T> {
+		Dual2 { x0: factor, x1: Zero::zero() }
 	}
 }
 
@@ -180,6 +187,13 @@ impl<T> Complex<T> {
 	/// Creates a new Complex number.
 	pub fn new(x0: T, x1: T) -> Complex<T> {
 		Complex { x0: x0, x1: x1 }
+	}
+}
+
+impl<T: Zero>
+Scale<T> for Complex<T> {
+	fn scale(factor: T) -> Complex<T> {
+		Complex { x0: factor, x1: Zero::zero() }
 	}
 }
 
@@ -278,6 +292,16 @@ impl<T> Quaternion<T> {
 	/// Notice that the scalar component is after the vector.
 	pub fn new(x: T, y: T, z: T, w: T) -> Quaternion<T> {
 		Quaternion { x: x, y: y, z: z, w: w }
+	}
+}
+
+impl<T: Zero>
+Scale<T> for Quaternion<T> {
+	fn scale(factor: T) -> Quaternion<T> {
+		Quaternion { x: Zero::zero(),
+			y: Zero::zero(),
+			z: Zero::zero(),
+			w: factor }
 	}
 }
 
@@ -465,6 +489,33 @@ impl<T> Matrix4<T> {
 			m21: m21, m22: m22, m23: m23, m24: m24,
 			m31: m31, m32: m32, m33: m33, m34: m34,
 			m41: m41, m42: m42, m43: m43, m44: m44
+		}
+	}
+}
+
+impl<T: Zero + Clone>
+Scale<T> for Matrix4<T> {
+	fn scale(factor: T) -> Matrix4<T> {
+		Matrix4 {
+			m11: factor.clone(),
+			m12: Zero::zero(),
+			m13: Zero::zero(),
+			m14: Zero::zero(),
+
+			m21: Zero::zero(),
+			m22: factor.clone(),
+			m23: Zero::zero(),
+			m24: Zero::zero(),
+
+			m31: Zero::zero(),
+			m32: Zero::zero(),
+			m33: factor.clone(),
+			m34: Zero::zero(),
+
+			m41: Zero::zero(),
+			m42: Zero::zero(),
+			m43: Zero::zero(),
+			m44: factor.clone()
 		}
 	}
 }
