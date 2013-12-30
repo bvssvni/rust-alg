@@ -17,9 +17,9 @@
 //			Det	Inv	NormSq
 //	Dual2		x	x	x
 //	Complex		x		x
-//	Quaternion			x
+//	Quaternion	-		x
 //	Matrix4		x	x	-
-//	Vector				x
+//	Vector		-		x
 //	f32			x
 //	f64			x
 
