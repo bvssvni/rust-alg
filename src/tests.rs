@@ -1,9 +1,7 @@
 extern mod alg;
 
-use alg::{
-	Dual2, Complex, Quaternion, NormSq,
-	Matrix4, Det, Inv, Vector, Eps, Scale
-};
+use alg::{ Dual2, Complex, Quaternion, Matrix4, Vector };
+use alg::{ NormSq, Det, Inv, Eps, Scale };
 use std::num::{One};
 
 #[test]
