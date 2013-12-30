@@ -132,6 +132,14 @@ fn test_complex_div() {
 }
 
 #[test]
+fn test_complex_inv() {
+	let a = Complex::new( 1f64, 2f64 );
+	let b = a.inv();
+	let c = Complex::new( 0.2f64, -0.4f64 );
+	assert_eq!( b, c );
+}
+
+#[test]
 fn test_complex_neg() {
 	let a = Complex::new( 1f64, 2f64 );
 	let b = -a;
@@ -223,6 +231,13 @@ fn test_quaternion_div() {
 	let n = b.norm_sq();
 	let d = Quaternion::new( -10f64 / n, -20f64 / n, 0f64 / n, 20f64 / n );
 	assert_eq!( c, d );
+}
+
+#[test]
+fn test_quaternion_inv() {
+	let a = Quaternion::new( 1f64, 2f64, 3f64, 4f64 );
+	let b = a.inv().inv();
+	assert!( b.close_eps(&a, 0.00001f64) );
 }
 
 #[test]
@@ -421,6 +436,14 @@ fn test_vector_div() {
 	let c = a / b;
 	let d = Vector::new( ~[1f64 / 3f64, 1f64, 3f64] );
 	assert!( c.close_eps(&d, 0f64) );
+}
+
+#[test]
+fn test_vector_inv() {
+	let a = Vector::new( ~[1f64, 2f64, 3f64] );
+	let b = a.inv();
+	let c = Vector::new( ~[1f64, 0.5f64, 1f64/3f64] );
+	assert!( b.close_eps(&c, 0.00001f64) );
 }
 
 #[test]

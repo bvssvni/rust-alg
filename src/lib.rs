@@ -7,21 +7,21 @@
 
 //! Library for Algebra.
 
-//			Add	Sub	Mul	Div	Neg
-//	Dual2		x	x	x	x	x
-//	Complex		x	x	x	x	x
-//	Quaternion	x	x	x	x	x
-//	Matrix4		x	x	x	x	x
-//	Vector		x	x	x	x	x
+//			Add	Sub	Mul	Div	Neg	Inv
+//	Dual2		x	x	x	x	x	x
+//	Complex		x	x	x	x	x	x
+//	Quaternion	x	x	x	x	x	x
+//	Matrix4		x	x	x	x	x	x
+//	Vector		x	x	x	x	x	x
+//	f32		std	std	std	std	std	x
+//	f64		std	std	std	std	std	x
 
-//			Det	Inv	NormSq
-//	Dual2		x	x	x
-//	Complex		x		x
-//	Quaternion	-		x
-//	Matrix4		x	x	-
-//	Vector		-		x
-//	f32			x
-//	f64			x
+//			Det	NormSq
+//	Dual2		x	x
+//	Complex		x	x
+//	Quaternion	-	x
+//	Matrix4		x	-
+//	Vector		-	x
 
 //			Eq	Zero	One
 //	Dual2		x	x	x
@@ -214,6 +214,15 @@ Div<Complex<T>, Complex<T>> for Complex<T> {
 	}
 }
 
+impl<T: Add<T, T> + Mul<T, T> + Div<T, T> + Neg<T>>
+Inv<Complex<T>> for Complex<T> {
+	fn inv(&self) -> Complex<T> {
+		let len2 = self.x0 * self.x0 + self.x1 * self.x1;
+		Complex { x0: self.x0 / len2,
+			x1: -self.x1 / len2 }
+	}
+}
+
 impl<T: Neg<T>>
 Neg<Complex<T>> for Complex<T> {
 	fn neg(&self) -> Complex<T> {
@@ -342,6 +351,22 @@ Div<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
 				+self.x*rhs.x
 				+self.y*rhs.y
 				+self.z*rhs.z) / len2,
+		}
+	}
+}
+
+impl<T: Mul<T, T> + Add<T, T> + Div<T, T> + Neg<T>>
+Inv<Quaternion<T>> for Quaternion<T> {
+	fn inv(&self) -> Quaternion<T> {
+		let len2 = self.x * self.x 
+			+ self.y * self.y 
+			+ self.z * self.z
+			+ self.w * self.w;
+		Quaternion {
+			x: 	-self.x / len2,
+			y: 	-self.y / len2,
+			z: 	-self.z / len2,
+			w: 	self.w / len2,
 		}
 	}
 }
@@ -878,6 +903,18 @@ Div<Vector<T>, Vector<T>> for Vector<T> {
 
 			Vector { x: res }
 		}
+	}
+}
+
+impl<T: Inv<T>>
+Inv<Vector<T>> for Vector<T> {
+	fn inv(&self) -> Vector<T> {
+		let mut res: ~[T] = ~[];
+		for i in range(0, self.x.len()) {
+			res.push(self.x[i].inv());
+		}
+
+		Vector { x: res }
 	}
 }
 
