@@ -1,12 +1,11 @@
 extern mod alg;
 
 use alg::{ Dual2, Complex, Quaternion, Matrix4, Vector };
-use alg::{ NormSq, Det, Inv, Eps, Scale };
 use std::num::{One};
 
 #[test]
 fn test_dual_scale() {
-	let a: Dual2<f64> = Scale::scale( 2_f64 );
+	let a: Dual2<f64> = alg::scale( 2_f64 );
 	let b = Dual2::new( 2_f64, 0_f64 );
 	assert_eq!( a, b );
 }
@@ -50,12 +49,12 @@ fn test_dual_div() {
 #[test]
 fn test_dual_inv() {
 	let a = Dual2::new( 1_f64, 2_f64 );
-	let b = a.inv();
+	let b = alg::inv(a);
 	let c = Dual2::new( 1_f64, -2_f64 );
 	assert_eq!( b, c );
 
 	let a = Dual2::new( 1_f32, 2_f32 );
-	let b = a.inv();
+	let b = alg::inv(a);
 	let c = Dual2::new( 1_f32, -2_f32 );
 	assert_eq!( b, c );
 }
@@ -71,14 +70,14 @@ fn test_dual_neg() {
 #[test]
 fn test_dual_normsq() {
 	let a = Dual2::new( 1_f64, 2_f64 );
-	let b = a.norm_sq();
+	let b = alg::norm_sq(a);
 	assert_eq!( b, 1_f64 );
 }
 
 #[test]
 fn test_dual_det() {
 	let a = Dual2::new( 0_f64, 1_f64 );
-	let b = a.det();
+	let b = alg::det(a);
 	assert_eq!( b, 0_f64 );
 }
 
@@ -93,16 +92,16 @@ fn test_dual_one() {
 fn test_dual_eps() {
 	let a = Dual2::new( 1_f64, 2_f64 );
 	let b = Dual2::new( 1_f64, 2_f64 );
-	assert!( a.close_eps(&b, 0_f64) );
+	assert!( alg::close_eps(&a, &b, 0_f64) );
 	let c = Dual2::new( 2_f64, 2_f64 );
-	assert!( !a.close_eps(&c, 0_f64) );
+	assert!( !alg::close_eps(&a, &c, 0_f64) );
 	let d = Dual2::new( 1_f64, 0_f64 );
-	assert!( !a.close_eps(&d, 0_f64) );
+	assert!( !alg::close_eps(&a, &d, 0_f64) );
 }
 
 #[test]
 fn test_complex_scale() {
-	let a: Complex<f64> = Scale::scale(2_f64);
+	let a: Complex<f64> = alg::scale(2_f64);
 	let b = Complex::new( 2_f64, 0_f64 );
 	assert_eq!( a, b );
 }
@@ -146,7 +145,7 @@ fn test_complex_div() {
 #[test]
 fn test_complex_inv() {
 	let a = Complex::new( 1_f64, 2_f64 );
-	let b = a.inv();
+	let b = alg::inv(a);
 	let c = Complex::new( 0.2_f64, -0.4_f64 );
 	assert_eq!( b, c );
 }
@@ -162,7 +161,7 @@ fn test_complex_neg() {
 #[test]
 fn test_complex_norm_sq() {
 	let a = Complex::new( 1_f64, 2_f64 );
-	let b = a.norm_sq();
+	let b = alg::norm_sq(a);
 	let c = 5_f64;
 	assert_eq!( b, c );
 }
@@ -178,23 +177,23 @@ fn test_complex_one() {
 fn test_complex_eps() {
 	let a = Complex::new( 1_f64, 2_f64 );
 	let b = Complex::new( 1_f64, 2_f64 );
-	assert!( a.close_eps(&b, 0_f64) );
+	assert!( alg::close_eps(&a, &b, 0_f64) );
 	let c = Complex::new( 2_f64, 2_f64 );
-	assert!( !a.close_eps(&c, 0_f64) );
+	assert!( !alg::close_eps(&a, &c, 0_f64) );
 	let d = Complex::new( 1_f64, 0_f64 );
-	assert!( !a.close_eps(&d, 0_f64) );
+	assert!( !alg::close_eps(&a, &d, 0_f64) );
 }
 
 #[test]
 fn test_complex_det() {
 	let a = Complex::new( 0_f64, 0_f64 );
-	let b = a.det();
+	let b = alg::det(a);
 	assert_eq!( b, 0_f64 );
 }
 
 #[test]
 fn test_quaternion_scale() {
-	let a: Quaternion<f64> = Scale::scale( 2_f64 );
+	let a: Quaternion<f64> = alg::scale( 2_f64 );
 	let b = Quaternion::new( 0_f64, 0_f64, 0_f64, 2_f64 );
 	assert_eq!( a, b );
 }
@@ -237,7 +236,7 @@ fn test_quaternion_neg() {
 #[test]
 fn test_quaternion_norm_sq() {
 	let a = Quaternion::new( 1_f64, 2_f64, 3_f64, 4_f64 );
-	let b = a.norm_sq();
+	let b = alg::norm_sq(a);
 	let c = 30_f64;
 	assert_eq!( b, c );
 }
@@ -247,7 +246,7 @@ fn test_quaternion_div() {
 	let a = Quaternion::new( 1_f64, 2_f64, 3_f64, 4_f64 );
 	let b = Quaternion::new( 4_f64, 3_f64, 2_f64, 1_f64 );
 	let c = a / b;
-	let n = b.norm_sq();
+	let n = alg::norm_sq(b);
 	let d = Quaternion::new( -10_f64 / n, -20_f64 / n, 0_f64 / n, 20_f64 / n );
 	assert_eq!( c, d );
 }
@@ -255,8 +254,8 @@ fn test_quaternion_div() {
 #[test]
 fn test_quaternion_inv() {
 	let a = Quaternion::new( 1_f64, 2_f64, 3_f64, 4_f64 );
-	let b = a.inv().inv();
-	assert!( b.close_eps(&a, 0.00001_f64) );
+	let b = alg::inv(alg::inv(a));
+	assert!( alg::close_eps(&b, &a, 0.00001_f64) );
 }
 
 #[test]
@@ -270,20 +269,20 @@ fn test_quaternion_one() {
 fn test_quaternion_eps() {
 	let a = Quaternion::new( 1_f64, 2_f64, 3_f64, 4_f64 );
 	let b = Quaternion::new( 1_f64, 2_f64, 3_f64, 4_f64 );
-	assert!( a.close_eps(&b, 0_f64) );
+	assert!( alg::close_eps(&a, &b, 0_f64) );
 	let b = Quaternion::new( 0_f64, 2_f64, 3_f64, 4_f64 );
-	assert!( !a.close_eps(&b, 0_f64) );
+	assert!( !alg::close_eps(&a, &b, 0_f64) );
 	let b = Quaternion::new( 1_f64, 0_f64, 3_f64, 4_f64 );
-	assert!( !a.close_eps(&b, 0_f64) );
+	assert!( !alg::close_eps(&a, &b, 0_f64) );
 	let b = Quaternion::new( 1_f64, 2_f64, 0_f64, 4_f64 );
-	assert!( !a.close_eps(&b, 0_f64) );	
+	assert!( !alg::close_eps(&a, &b, 0_f64) );	
 	let b = Quaternion::new( 1_f64, 2_f64, 3_f64, 0_f64 );
-	assert!( !a.close_eps(&b, 0_f64) );
+	assert!( !alg::close_eps(&a, &b, 0_f64) );
 }
 
 #[test]
 fn test_matrix4_scale() {
-	let a: Matrix4<f64> = Scale::scale( 2_f64 );
+	let a: Matrix4<f64> = alg::scale( 2_f64 );
 	let b = Matrix4::new(
 		2_f64, 0_f64, 0_f64, 0_f64,
 		0_f64, 2_f64, 0_f64, 0_f64,
@@ -391,7 +390,7 @@ fn test_matrix4_det() {
 		0_f64, 0_f64, 3_f64, 0_f64,
 		0_f64, 0_f64, 0_f64, 4_f64
 	);
-	let b = a.det();
+	let b = alg::det(a);
 	let c = 24_f64;
 	assert_eq!( b, c );
 }
@@ -404,9 +403,9 @@ fn test_matrix4_inv() {
 		23_f64,	29_f64,	31_f64,	37_f64,
 		41_f64,	43_f64,	47_f64,	51_f64
 	);
-	let b = a.inv();
-	let c = b.inv();
-	assert!( a.close_eps(&c, 0.0001_f64) );
+	let b = alg::inv(a);
+	let c = alg::inv(b);
+	assert!( alg::close_eps(&a, &c, 0.0001_f64) );
 }
 
 #[test]
@@ -418,7 +417,7 @@ fn test_matrix4_div() {
 		0_f64, 0_f64, 0_f64, 1_f64
 	);
 	let b = a / a;
-	assert!( b.close_eps(&a, 0.00001_f64) );
+	assert!( alg::close_eps(&b, &a, 0.00001_f64) );
 }
 
 #[test]
@@ -466,15 +465,15 @@ fn test_vector_div() {
 	let b = Vector::new( ~[3_f64, 2_f64, 1_f64] );
 	let c = a / b;
 	let d = Vector::new( ~[1_f64 / 3_f64, 1_f64, 3_f64] );
-	assert!( c.close_eps(&d, 0_f64) );
+	assert!( alg::close_eps(&c, &d, 0_f64) );
 }
 
 #[test]
 fn test_vector_inv() {
 	let a = Vector::new( ~[1_f64, 2_f64, 3_f64] );
-	let b = a.inv();
+	let b = alg::inv(a);
 	let c = Vector::new( ~[1_f64, 0.5_f64, 1_f64/3_f64] );
-	assert!( b.close_eps(&c, 0.00001f64) );
+	assert!( alg::close_eps(&b, &c, 0.00001f64) );
 }
 
 #[test]
@@ -488,7 +487,7 @@ fn test_vector_neg() {
 #[test]
 fn test_vector_norm_sq() {
 	let a = Vector::new( ~[1_f64, 2_f64, 3_f64] );
-	let b = a.norm_sq();
+	let b = alg::norm_sq(a);
 	let c = 14_f64;
 	assert_eq!( b, c );
 }
@@ -497,14 +496,14 @@ fn test_vector_norm_sq() {
 fn test_f64_eps() {
 	let a = 1_f64;
 	let b = 1_f64;
-	assert!( a.close_eps(&b, 0_f64) );
+	assert!( alg::close_eps(&a, &b, 0_f64) );
 }
 
 #[test]
 fn test_f32_eps() {
 	let a = 1f32;
 	let b = 1f32;
-	assert!( a.close_eps(&b, 0_f64) );
+	assert!( alg::close_eps(&a, &b, 0_f64) );
 }
 
 #[test]

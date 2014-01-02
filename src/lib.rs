@@ -41,11 +41,19 @@
 
 use std::num::{Zero, One};
 
+/// Computes the square of the norm/length.
+#[inline(always)]
+pub fn norm_sq<T: NormSq<U>, U>(a: T) -> U {a.norm_sq()} 
+
 /// Computes the square of length of algebraic type.
 pub trait NormSq<Result> {
 	/// Computes the square of the norm/length.
 	fn norm_sq(&self) -> Result;
 }
+
+/// Calculates the determinant of the structure.
+#[inline(always)]
+pub fn det<T: Det<U>, U>(a: T) -> U {a.det()}
 
 /// Is implemented on structures that has a determinant.
 /// A determinant is a value that tells whether the structure is invertible.
@@ -55,10 +63,20 @@ pub trait Det<Result> {
 	fn det(&self) -> Result;
 }
 
+/// Creates an inverted version of the structure.
+#[inline(always)]
+pub fn inv<T: Inv<U>, U>(a: T) -> U {a.inv()}
+
 /// Implemented on structures that can be inverted.
 pub trait Inv<Result> {
 	/// Creates an inverted version of the structure.
 	fn inv(&self) -> Result;
+}
+
+/// Checks for equality with a custom approximate epsilon.
+#[inline(always)]
+pub fn close_eps<T: Eps>(a: &T, other: &T, eps: f64) -> bool {
+	a.close_eps(other, eps)
 }
 
 /// Eps creates a value from f64 number.
@@ -66,6 +84,12 @@ pub trait Inv<Result> {
 pub trait Eps {
 	/// Checks for equality with a custom approximate epsilon.
 	fn close_eps(&self, other: &Self, eps: f64) -> bool;
+}
+
+/// Creates a scaling type that scales up under multiplication.
+#[inline(always)]
+pub fn scale<T: Scale<U>, U>(a: U) -> T {
+	Scale::scale(a)
 }
 
 /// Implemented on structures that can scale under multiplication.
