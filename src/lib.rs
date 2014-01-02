@@ -107,6 +107,12 @@ pub struct Dual2<T> {
 	x1 : T,
 }
 
+/// Constructs a new dual number.
+#[inline(always)]
+pub fn dual2<T>(x0: T, x1: T) -> Dual2<T> {
+	Dual2::new(x0, x1)
+}
+
 impl<T> Dual2<T> {
 	/// Constructs a new dual number.
 	pub fn new(x0: T, x1: T) -> Dual2<T> {
@@ -205,6 +211,12 @@ pub struct Complex<T> {
 	x0: T,
 	/// The imaginary dimension of the complex number.
 	x1: T,
+}
+
+/// Creates a new Complex number.
+#[inline(always)]
+pub fn complex<T>(x0: T, x1: T) -> Complex<T> {
+	Complex::new(x0, x1)
 }
 
 impl<T> Complex<T> {
@@ -309,6 +321,13 @@ pub struct Quaternion<T> {
 	z: T,
 	/// The scalar component of the quaternion.
 	w: T,
+}
+
+/// Creates a new Quaternion.
+/// Notice that the scalar component is after the vector.
+#[inline(always)]
+pub fn quaternion<T>(x: T, y: T, z: T, w: T) -> Quaternion<T> {
+	Quaternion::new(x, y, z, w)
 }
 
 impl<T> Quaternion<T> {
@@ -498,6 +517,22 @@ pub struct Matrix4<T> {
 	m43: T, 
 	/// Element at fourth row and fourth column.
 	m44: T
+}
+
+/// Creates a new matrix with elements.
+#[inline(always)]
+pub fn matrix4<T>(
+	m11: T, m12: T, m13: T, m14: T,
+	m21: T, m22: T, m23: T, m24: T,
+	m31: T, m32: T, m33: T, m34: T,
+	m41: T, m42: T, m43: T, m44: T
+) -> Matrix4<T> {
+	Matrix4::new(
+		m11, m12, m13, m14,
+		m21, m22, m23, m24,
+		m31, m32, m33, m34,
+		m41, m42, m43, m44
+	)
 }
 
 impl<T> Matrix4<T> {
@@ -896,6 +931,12 @@ One for Matrix4<T> {
 pub struct Vector<T> {
 	/// Contains the items in the vector.
 	x: ~[T],
+}
+
+/// Creates a new vector from a list of values.
+#[inline(always)]
+pub fn vector<T>(x: ~[T]) -> Vector<T> {
+	Vector::new(x)
 }
 
 impl<T> Vector<T> {
