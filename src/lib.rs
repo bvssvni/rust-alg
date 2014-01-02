@@ -113,94 +113,146 @@ pub fn dual2<T>(x0: T, x1: T) -> Dual2<T> {
 	Dual2::new(x0, x1)
 }
 
-impl<T> Dual2<T> {
+impl<T>
+Dual2<T> {
 	/// Constructs a new dual number.
 	pub fn new(x0: T, x1: T) -> Dual2<T> {
-		Dual2 { x0: x0, x1: x1 }
+		Dual2 {
+			x0: x0,
+			x1: x1
+		}
 	}
 }
 
-impl<T: Zero>
+impl<
+	T: Zero
+>
 Scale<T> for Dual2<T> {
 	fn scale(factor: T) -> Dual2<T> {
-		Dual2 { x0: factor, x1: Zero::zero() }
+		Dual2 {
+			x0: factor, 
+			x1: Zero::zero()
+		}
 	}
 }
 
-impl<T: Add<T, T>>
+impl<
+	T: Add<T, T>
+>
 Add<Dual2<T>, Dual2<T>> for Dual2<T> {
 	fn add(&self, rhs: &Dual2<T>) -> Dual2<T> {
-		Dual2 { x0: self.x0 + rhs.x0, x1: self.x1 + rhs.x1 }
+		Dual2 {
+			x0: self.x0 + rhs.x0, 
+			x1: self.x1 + rhs.x1
+		}
 	}
 }
 
-impl<T: Sub<T, T>>
+impl<
+	T: Sub<T, T>
+>
 Sub<Dual2<T>, Dual2<T>> for Dual2<T> {
 	fn sub(&self, rhs: &Dual2<T>) -> Dual2<T> {
-		Dual2 { x0: self.x0 - rhs.x0, x1: self.x1 - rhs.x1 }
+		Dual2 {
+			x0: self.x0 - rhs.x0, 
+			x1: self.x1 - rhs.x1
+		}
 	}
 }
 
-impl<T: Mul<T, T> + Add<T, T>>
+impl<
+	T: Mul<T, T> + Add<T, T>
+>
 Mul<Dual2<T>, Dual2<T>> for Dual2<T> {
 	fn mul(&self, rhs: &Dual2<T>) -> Dual2<T> {
-		Dual2 { x0: self.x0 * rhs.x0,
-			x1: self.x0 * rhs.x1 + self.x1 * rhs.x0 }
+		Dual2 {
+			x0: self.x0 * rhs.x0,
+			x1: self.x0 * rhs.x1 + self.x1 * rhs.x0
+		}
 	}
 }
 
-impl<T: Div<T, T> + Sub<T, T> + Mul<T, T>>
+impl<
+	T: Div<T, T> + Sub<T, T> + Mul<T, T>
+>
 Div<Dual2<T>, Dual2<T>> for Dual2<T> {
 	fn div(&self, rhs: &Dual2<T>) -> Dual2<T> {
 		let b2 = rhs.x0 * rhs.x0;
-		Dual2 { x0: self.x0 / rhs.x0,
-			x1: (self.x1 * rhs.x0 - self.x0 * rhs.x1) / b2 }
+		Dual2 {
+			x0: self.x0 / rhs.x0,
+			x1: (self.x1 * rhs.x0 - self.x0 * rhs.x1) / b2
+		}
 	}
 }
 
-impl<T: Div<T, T> + Neg<T> + Mul<T, T> + Inv<T>>
+impl<
+	T: Div<T, T> + Neg<T> + Mul<T, T> + Inv<T>
+>
 Inv<Dual2<T>> for Dual2<T> {
 	fn inv(&self) -> Dual2<T> {
 		let b2 = self.x0 * self.x0;
-		Dual2 { x0: self.x0.inv(),
-			x1: -self.x1 / b2 }
+		Dual2 {
+			x0: self.x0.inv(),
+			x1: -self.x1 / b2
+		}
 	}
 }
 
-impl<T: Neg<T>>
+impl<
+	T: Neg<T>
+>
 Neg<Dual2<T>> for Dual2<T> {
 	fn neg(&self) -> Dual2<T> {
-		Dual2 { x0: -self.x0, x1: -self.x1 }
+		Dual2 {
+			x0: -self.x0,
+			x1: -self.x1
+		}
 	}
 }
 
-impl<T: Mul<T, T>>
+impl<
+	T: Mul<T, T>
+>
 NormSq<T> for Dual2<T> {
 	fn norm_sq(&self) -> T {
 		self.x0 * self.x0
 	}
 }
 
-impl<T: Mul<T, T>>
+impl<
+	T: Mul<T, T>
+>
 Det<T> for Dual2<T> {
 	fn det(&self) -> T {
 		self.x0 * self.x0
 	}
 }
 
-impl<T: One + Zero>
+impl<
+	T: One + Zero
+>
 One for Dual2<T> {
 	fn one() -> Dual2<T> {
-		Dual2 { x0: One::one(), x1: Zero::zero() }
+		Dual2 {
+			x0: One::one(),
+			x1: Zero::zero()
+		}
 	}
 }
 
-impl<T: Eps>
+impl<
+	T: Eps
+>
 Eps for Dual2<T> {
 	fn close_eps(&self, other: &Dual2<T>, eps: f64) -> bool {
-		if !self.x0.close_eps(&other.x0, eps) { false }
-		else if !self.x1.close_eps(&other.x1, eps) { false }
-		else { true }
+		if !self.x0.close_eps(&other.x0, eps) {
+			false
+		} else if !self.x1.close_eps(&other.x1, eps) {
+			false
+		}
+		else {
+			true
+		}
 	}
 }
 
@@ -219,92 +271,144 @@ pub fn complex<T>(x0: T, x1: T) -> Complex<T> {
 	Complex::new(x0, x1)
 }
 
-impl<T> Complex<T> {
+impl<T> 
+Complex<T> {
 	/// Creates a new Complex number.
 	pub fn new(x0: T, x1: T) -> Complex<T> {
-		Complex { x0: x0, x1: x1 }
+		Complex {
+			x0: x0, 
+			x1: x1
+		}
 	}
 }
 
-impl<T: Zero>
+impl<
+	T: Zero
+>
 Scale<T> for Complex<T> {
 	fn scale(factor: T) -> Complex<T> {
-		Complex { x0: factor, x1: Zero::zero() }
+		Complex {
+			x0: factor,
+			x1: Zero::zero()
+		}
 	}
 }
 
-impl<T: Add<T, T>> Add<Complex<T>, Complex<T>> for Complex<T> {
+impl<
+	T: Add<T, T>
+>
+Add<Complex<T>, Complex<T>> for Complex<T> {
 	fn add(&self, rhs: &Complex<T>) -> Complex<T> {
-		Complex { x0: self.x0 + rhs.x0,
-			x1: self.x1 + rhs.x1 }
+		Complex {
+			x0: self.x0 + rhs.x0,
+			x1: self.x1 + rhs.x1
+		}
 	}
 }
 
-impl<T: Sub<T, T>> Sub<Complex<T>, Complex<T>> for Complex<T> {
+impl<
+	T: Sub<T, T>
+> 
+Sub<Complex<T>, Complex<T>> for Complex<T> {
 	fn sub(&self, rhs: &Complex<T>) -> Complex<T> {
-		Complex { x0: self.x0 - rhs.x0,
-			x1: self.x1 - rhs.x1 }
+		Complex {
+			x0: self.x0 - rhs.x0,
+			x1: self.x1 - rhs.x1
+		}
 	}
 }
 
-impl<T: Mul<T, T> + Add<T, T> + Sub<T, T>>
+impl<
+	T: Mul<T, T> + Add<T, T> + Sub<T, T>
+>
 Mul<Complex<T>, Complex<T>> for Complex<T> {
 	fn mul(&self, rhs: &Complex<T>) -> Complex<T> {
-		Complex { x0: self.x0 * rhs.x0 - self.x1 * rhs.x1,
-			x1: self.x0 * rhs.x1 + self.x1 * rhs.x0 }
+		Complex { 
+			x0: self.x0 * rhs.x0 - self.x1 * rhs.x1,
+			x1: self.x0 * rhs.x1 + self.x1 * rhs.x0 
+		}
 	}
 }
 
-impl<T: Div<T, T> + Add<T, T> + Sub<T, T> + Mul<T, T>>
+impl<
+	T: Div<T, T> + Add<T, T> + Sub<T, T> + Mul<T, T>
+>
 Div<Complex<T>, Complex<T>> for Complex<T> {
 	fn div(&self, rhs: &Complex<T>) -> Complex<T> {
 		let len2 = rhs.x0 * rhs.x0 + rhs.x1 * rhs.x1;
-		Complex { x0: (self.x0 * rhs.x0 + self.x1 * rhs.x1) / len2,
-			x1: (self.x1 * rhs.x0 - self.x0 * rhs.x1) / len2 }
+		Complex {
+			x0: (self.x0 * rhs.x0 + self.x1 * rhs.x1) / len2,
+			x1: (self.x1 * rhs.x0 - self.x0 * rhs.x1) / len2
+		}
 	}
 }
 
-impl<T: Add<T, T> + Mul<T, T> + Div<T, T> + Neg<T>>
+impl<
+	T: Add<T, T> + Mul<T, T> + Div<T, T> + Neg<T>
+>
 Inv<Complex<T>> for Complex<T> {
 	fn inv(&self) -> Complex<T> {
 		let len2 = self.x0 * self.x0 + self.x1 * self.x1;
-		Complex { x0: self.x0 / len2,
-			x1: -self.x1 / len2 }
+		Complex {
+			x0: self.x0 / len2,
+			x1: -self.x1 / len2
+		}
 	}
 }
 
-impl<T: Neg<T>>
+impl<
+	T: Neg<T>
+>
 Neg<Complex<T>> for Complex<T> {
 	fn neg(&self) -> Complex<T> {
-		Complex { x0: -self.x0, x1: -self.x1 }
+		Complex {
+			x0: -self.x0, 
+			x1: -self.x1
+		}
 	}
 }
 
-impl<T: Mul<T, T> + Add<T, T>>
+impl<
+	T: Mul<T, T> + Add<T, T>
+>
 NormSq<T> for Complex<T> {
 	fn norm_sq(&self) -> T {
 		self.x0 * self.x0 + self.x1 * self.x1
 	}
 }
 
-impl<T: One + Zero>
+impl<
+	T: One + Zero
+>
 One for Complex<T> {
 	fn one() -> Complex<T> {
-		Complex { x0: One::one(), x1: Zero::zero() }
+		Complex {
+			x0: One::one(),
+			x1: Zero::zero()
+		}
 	}
 }
 
-impl<T: Eps>
+impl<
+	T: Eps
+>
 Eps for Complex<T> {
 	fn close_eps(&self, other: &Complex<T>, eps: f64) -> bool {
-		if ( !self.x0.close_eps(&other.x0, eps) ) { false }
-		else if ( !self.x1.close_eps(&other.x1, eps) ) { false }
-		else { true }
+		if !self.x0.close_eps(&other.x0, eps) { 
+			false 
+		} else if !self.x1.close_eps(&other.x1, eps) { 
+			false 
+		} else { 
+			true 
+		}
 	}
 }
 
-impl<T: Mul<T, T> + Add<T, T>>
-Det<T> for Complex<T> {
+impl<
+	T: Mul<T, T> + Add<T, T>
+>
+Det<T> 
+for Complex<T> {
 	fn det(&self) -> T {
 		self.x0 * self.x0 + self.x1 * self.x1
 	}
@@ -330,28 +434,43 @@ pub fn quaternion<T>(x: T, y: T, z: T, w: T) -> Quaternion<T> {
 	Quaternion::new(x, y, z, w)
 }
 
-impl<T> Quaternion<T> {
+impl<T> 
+Quaternion<T> {
 	/// Creates a new Quaternion.
 	/// Notice that the scalar component is after the vector.
 	pub fn new(x: T, y: T, z: T, w: T) -> Quaternion<T> {
-		Quaternion { x: x, y: y, z: z, w: w }
+		Quaternion {
+			x: x, 
+			y: y, 
+			z: z, 
+			w: w 
+		}
 	}
 }
 
-impl<T: Zero>
-Scale<T> for Quaternion<T> {
+impl<
+	T: Zero
+>
+Scale<T> 
+for Quaternion<T> {
 	fn scale(factor: T) -> Quaternion<T> {
-		Quaternion { x: Zero::zero(),
+		Quaternion { 
+			x: Zero::zero(),
 			y: Zero::zero(),
 			z: Zero::zero(),
-			w: factor }
+			w: factor 
+		}
 	}
 }
 
-impl<T: Add<T, T>>
-Add<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
+impl<
+	T: Add<T, T>
+>
+Add<Quaternion<T>, Quaternion<T>> 
+for Quaternion<T> {
 	fn add(&self, rhs: &Quaternion<T>) -> Quaternion<T> {
-		Quaternion { x: self.x + rhs.x,
+		Quaternion { 
+			x: self.x + rhs.x,
 			y: self.y + rhs.y,
 			z: self.z + rhs.z,
 			w: self.w + rhs.w,
@@ -359,10 +478,14 @@ Add<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
 	}
 }
 
-impl<T: Sub<T, T>>
-Sub<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
+impl<
+	T: Sub<T, T>
+>
+Sub<Quaternion<T>, Quaternion<T>> 
+for Quaternion<T> {
 	fn sub(&self, rhs: &Quaternion<T>) -> Quaternion<T> {
-		Quaternion { x: self.x - rhs.x,
+		Quaternion { 
+			x: self.x - rhs.x,
 			y: self.y - rhs.y,
 			z: self.z - rhs.z,
 			w: self.w - rhs.w
@@ -370,8 +493,11 @@ Sub<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
 	}
 }
 
-impl<T: Mul<T, T> + Sub<T, T> + Add<T, T>>
-Mul<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
+impl<
+	T: Mul<T, T> + Sub<T, T> + Add<T, T>
+>
+Mul<Quaternion<T>, Quaternion<T>> 
+for Quaternion<T> {
 	fn mul(&self, rhs: &Quaternion<T>) -> Quaternion<T> {
 		Quaternion {
 			x: 	self.w*rhs.x
@@ -394,8 +520,11 @@ Mul<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
 	}
 }
 
-impl<T: Mul<T, T> + Sub<T, T> + Add<T, T> + Div<T, T>>
-Div<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
+impl<
+	T: Mul<T, T> + Sub<T, T> + Add<T, T> + Div<T, T>
+>
+Div<Quaternion<T>, Quaternion<T>> 
+for Quaternion<T> {
 	fn div(&self, rhs: &Quaternion<T>) -> Quaternion<T> {
 		let len2 = rhs.x * rhs.x 
 			+ rhs.y * rhs.y 
@@ -422,8 +551,11 @@ Div<Quaternion<T>, Quaternion<T>> for Quaternion<T> {
 	}
 }
 
-impl<T: Mul<T, T> + Add<T, T> + Div<T, T> + Neg<T>>
-Inv<Quaternion<T>> for Quaternion<T> {
+impl<
+	T: Mul<T, T> + Add<T, T> + Div<T, T> + Neg<T>
+>
+Inv<Quaternion<T>> 
+for Quaternion<T> {
 	fn inv(&self) -> Quaternion<T> {
 		let len2 = self.x * self.x 
 			+ self.y * self.y 
@@ -438,18 +570,26 @@ Inv<Quaternion<T>> for Quaternion<T> {
 	}
 }
 
-impl<T: Neg<T>>
-Neg<Quaternion<T>> for Quaternion<T> {
+impl<
+	T: Neg<T>
+>
+Neg<Quaternion<T>> 
+for Quaternion<T> {
 	fn neg(&self) -> Quaternion<T> {
-		Quaternion { x: -self.x,
+		Quaternion { 
+			x: -self.x,
 			y: -self.y,
 			z: -self.z,
-			w: -self.w }
+			w: -self.w 
+		}
 	}
 }
 
-impl<T: Add<T, T> + Mul<T, T>>
-NormSq<T> for Quaternion<T> {
+impl<
+	T: Add<T, T> + Mul<T, T>
+>
+NormSq<T> 
+for Quaternion<T> {
 	fn norm_sq(&self) -> T {
 		self.x * self.x
 		+ self.y * self.y
@@ -458,24 +598,38 @@ NormSq<T> for Quaternion<T> {
 	}
 }
 
-impl<T: One + Zero>
-One for Quaternion<T> {
+impl<
+	T: One + Zero
+>
+One 
+for Quaternion<T> {
 	fn one() -> Quaternion<T> {
-		Quaternion { x: Zero::zero(),
+		Quaternion { 
+			x: Zero::zero(),
 			y: Zero::zero(),
 			z: Zero::zero(),
-			w: One::one() }
+			w: One::one() 
+		}
 	}
 }
 
-impl<T: Eps>
-Eps for Quaternion<T> {
+impl<
+	T: Eps
+>
+Eps 
+for Quaternion<T> {
 	fn close_eps(&self, other: &Quaternion<T>, eps: f64) -> bool {
-		if ( !self.x.close_eps(&other.x, eps) ) { false }
-		else if ( !self.y.close_eps(&other.y, eps) ) { false }
-		else if ( !self.z.close_eps(&other.z, eps) ) { false }
-		else if ( !self.w.close_eps(&other.w, eps) ) { false }
-		else { true }
+		if !self.x.close_eps(&other.x, eps) { 
+			false 
+		} else if !self.y.close_eps(&other.y, eps) { 
+			false 
+		} else if !self.z.close_eps(&other.z, eps) { 
+			false 
+		} else if !self.w.close_eps(&other.w, eps) { 
+			false 
+		} else { 
+			true 
+		}
 	}
 }
 
@@ -535,7 +689,8 @@ pub fn matrix4<T>(
 	)
 }
 
-impl<T> Matrix4<T> {
+impl<T> 
+Matrix4<T> {
 	/// Creates a new matrix with elements.
 	pub fn new(
 		m11: T, m12: T, m13: T, m14: T,
@@ -552,8 +707,11 @@ impl<T> Matrix4<T> {
 	}
 }
 
-impl<T: Zero + Clone>
-Scale<T> for Matrix4<T> {
+impl<
+	T: Zero + Clone
+>
+Scale<T> 
+for Matrix4<T> {
 	fn scale(factor: T) -> Matrix4<T> {
 		Matrix4 {
 			m11: factor.clone(),
@@ -579,8 +737,11 @@ Scale<T> for Matrix4<T> {
 	}
 }
 
-impl<T: Add<T, T>>
-Add<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+impl<
+	T: Add<T, T>
+>
+Add<Matrix4<T>, Matrix4<T>> 
+for Matrix4<T> {
 	fn add(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
 		Matrix4 {
 			m11: self.m11 + rhs.m11,
@@ -606,8 +767,11 @@ Add<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
 	}
 }
 
-impl<T: Sub<T, T>>
-Sub<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+impl<
+	T: Sub<T, T>
+>
+Sub<Matrix4<T>, Matrix4<T>> 
+for Matrix4<T> {
 	fn sub(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
 		Matrix4 {
 			m11: self.m11 - rhs.m11,
@@ -633,8 +797,11 @@ Sub<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
 	}
 }
 
-impl<T: Mul<T, T> + Add<T, T>>
-Mul<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+impl<
+	T: Mul<T, T> + Add<T, T>
+>
+Mul<Matrix4<T>, Matrix4<T>> 
+for Matrix4<T> {
 	fn mul(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
 		Matrix4 {
 			m11: self.m11*rhs.m11
@@ -708,20 +875,41 @@ Mul<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
 	}
 }
 
-impl<T: Neg<T>>
-Neg<Matrix4<T>> for Matrix4<T> {
+impl<
+	T: Neg<T>
+>
+Neg<Matrix4<T>> 
+for Matrix4<T> {
 	fn neg(&self) -> Matrix4<T> {
 		Matrix4 {
-			m11: -self.m11, m12: -self.m12, m13: -self.m13, m14: -self.m14,
-			m21: -self.m21, m22: -self.m22, m23: -self.m23, m24: -self.m24,
-			m31: -self.m31, m32: -self.m32, m33: -self.m33, m34: -self.m34,
-			m41: -self.m41, m42: -self.m42, m43: -self.m43, m44: -self.m44
+			m11: -self.m11, 
+			m12: -self.m12, 
+			m13: -self.m13, 
+			m14: -self.m14,
+
+			m21: -self.m21, 
+			m22: -self.m22, 
+			m23: -self.m23, 
+			m24: -self.m24,
+			
+			m31: -self.m31, 
+			m32: -self.m32, 
+			m33: -self.m33, 
+			m34: -self.m34,
+
+			m41: -self.m41, 
+			m42: -self.m42, 
+			m43: -self.m43, 
+			m44: -self.m44
 		}
 	}
 }
 
-impl<T: Add<T, T> + Mul<T, T> + Sub<T, T>>
-Det<T> for Matrix4<T> {
+impl<
+	T: Add<T, T> + Mul<T, T> + Sub<T, T>
+>
+Det<T> 
+for Matrix4<T> {
 	fn det(&self) -> T {
 		self.m11*self.m22*self.m33*self.m44
 		+self.m11*self.m23*self.m34*self.m42
@@ -757,8 +945,11 @@ Det<T> for Matrix4<T> {
 	}
 }
 
-impl<T: Add<T, T> + Mul<T, T> + Sub<T, T> + Div<T, T>>
-Inv<Matrix4<T>> for Matrix4<T> {
+impl<
+	T: Add<T, T> + Mul<T, T> + Sub<T, T> + Div<T, T>
+>
+Inv<Matrix4<T>> 
+for Matrix4<T> {
 	fn inv(&self) -> Matrix4<T> {
 		let det = self.det();
 		Matrix4 {
@@ -865,16 +1056,22 @@ Inv<Matrix4<T>> for Matrix4<T> {
 	}
 }
 
-impl<T: Add<T, T> + Mul<T, T> + Sub<T, T> + Div<T, T>>
-Div<Matrix4<T>, Matrix4<T>> for Matrix4<T> {
+impl<
+	T: Add<T, T> + Mul<T, T> + Sub<T, T> + Div<T, T>
+>
+Div<Matrix4<T>, Matrix4<T>> 
+for Matrix4<T> {
 	fn div(&self, rhs: &Matrix4<T>) -> Matrix4<T> {
 		let inv = rhs.inv();
 		self * inv
 	}
 }
 
-impl<T: Eps>
-Eps for Matrix4<T> {
+impl<
+	T: Eps
+>
+Eps 
+for Matrix4<T> {
 	fn close_eps(&self, other: &Matrix4<T>, eps: f64) -> bool {
 		self.m11.close_eps(&other.m11, eps)
 		&& self.m12.close_eps(&other.m12, eps)
@@ -898,8 +1095,11 @@ Eps for Matrix4<T> {
 	}
 }
 
-impl<T: Zero + One>
-One for Matrix4<T> {
+impl<
+	T: Zero + One
+>
+One 
+for Matrix4<T> {
 	fn one() -> Matrix4<T> {
 		Matrix4 {
 			m11: One::one(),
@@ -939,18 +1139,26 @@ pub fn vector<T>(x: ~[T]) -> Vector<T> {
 	Vector::new(x)
 }
 
-impl<T> Vector<T> {
+impl<T> 
+Vector<T> {
 	/// Creates a new vector from a list of values.
 	pub fn new(x: ~[T]) -> Vector<T> {
-		Vector { x: x }
+		Vector {
+			x: x 
+		}
 	}
 }
 
-impl<T: Add<T, T>>
-Add<Vector<T>, Vector<T>> for Vector<T> {
+impl<
+	T: Add<T, T>
+>
+Add<Vector<T>, Vector<T>> 
+for Vector<T> {
 	fn add(&self, rhs: &Vector<T>) -> Vector<T> {
 		if self.x.len() != rhs.x.len() {
-			Vector { x: ~[] }
+			Vector { 
+				x: ~[] 
+			}
 		} else {
 			let mut res: ~[T] = ~[];
 			let mut i = 0;
@@ -960,16 +1168,23 @@ Add<Vector<T>, Vector<T>> for Vector<T> {
 				i += 1;
 			}
 
-			Vector { x: res }
+			Vector { 
+				x: res 
+			}
 		}
 	}
 }
 
-impl<T: Sub<T, T>>
-Sub<Vector<T>, Vector<T>> for Vector<T> {
+impl<
+	T: Sub<T, T>
+>
+Sub<Vector<T>, Vector<T>> 
+for Vector<T> {
 	fn sub(&self, rhs: &Vector<T>) -> Vector<T> {
 		if self.x.len() != rhs.x.len() {
-			Vector { x: ~[] }
+			Vector { 
+				x: ~[] 
+			}
 		} else {
 			let mut res: ~[T] = ~[];
 			let mut i = 0;
@@ -979,16 +1194,23 @@ Sub<Vector<T>, Vector<T>> for Vector<T> {
 				i += 1;
 			}
 
-			Vector { x: res }
+			Vector { 
+				x: res 
+			}
 		}
 	}
 }
 
-impl<T: Mul<T, T>>
-Mul<Vector<T>, Vector<T>> for Vector<T> {
+impl<
+	T: Mul<T, T>
+>
+Mul<Vector<T>, Vector<T>> 
+for Vector<T> {
 	fn mul(&self, rhs: &Vector<T>) -> Vector<T> {
 		if self.x.len() != rhs.x.len() {
-			Vector { x: ~[] }
+			Vector { 
+				x: ~[] 
+			}
 		} else {
 			let mut res: ~[T] = ~[];
 			let mut i = 0;
@@ -998,16 +1220,23 @@ Mul<Vector<T>, Vector<T>> for Vector<T> {
 				i += 1;
 			}
 
-			Vector { x: res }
+			Vector { 
+				x: res 
+			}
 		}
 	}
 }
 
-impl<T: Div<T, T>>
-Div<Vector<T>, Vector<T>> for Vector<T> {
+impl<
+	T: Div<T, T>
+>
+Div<Vector<T>, Vector<T>> 
+for Vector<T> {
 	fn div(&self, rhs: &Vector<T>) -> Vector<T> {
 		if self.x.len() != rhs.x.len() {
-			Vector { x: ~[] }
+			Vector { 
+				x: ~[] 
+			}
 		} else {
 			let mut res: ~[T] = ~[];
 			let mut i = 0;
@@ -1017,37 +1246,52 @@ Div<Vector<T>, Vector<T>> for Vector<T> {
 				i += 1;
 			}
 
-			Vector { x: res }
+			Vector { 
+				x: res 
+			}
 		}
 	}
 }
 
-impl<T: Inv<T>>
-Inv<Vector<T>> for Vector<T> {
+impl<
+	T: Inv<T>
+>
+Inv<Vector<T>> 
+for Vector<T> {
 	fn inv(&self) -> Vector<T> {
 		let mut res: ~[T] = ~[];
 		for i in range(0, self.x.len()) {
 			res.push(self.x[i].inv());
 		}
 
-		Vector { x: res }
+		Vector { 
+			x: res 
+		}
 	}
 }
 
-impl<T: Neg<T>>
-Neg<Vector<T>> for Vector<T> {
+impl<
+	T: Neg<T>
+>
+Neg<Vector<T>> 
+for Vector<T> {
 	fn neg(&self) -> Vector<T> {
 		let mut res: ~[T] = ~[];
 		for x in self.x.iter() {
 			res.push(-x);
 		}
 
-		Vector { x: res }
+		Vector { 
+			x: res 
+		}
 	}
 }
 
-impl<T: Add<T, T> + Mul<T, T> + Clone>
-NormSq<T> for Vector<T> {
+impl<
+	T: Add<T, T> + Mul<T, T> + Clone
+>
+NormSq<T> 
+for Vector<T> {
 	fn norm_sq(&self) -> T {
 		let mut res = self.x[0].clone();
 		for x in self.x.iter().skip(1) {
@@ -1058,13 +1302,19 @@ NormSq<T> for Vector<T> {
 	}
 }
 
-impl<T: Eps> Eps for Vector<T> {
+impl<
+	T: Eps
+> 
+Eps 
+for Vector<T> {
 	fn close_eps(&self, other: &Vector<T>, eps: f64) -> bool {
 		let n = self.x.len();
 		let m = other.x.len();
 		if n != m { fail!("Vectors not of same length"); }
 
-		if range(0, n).any(|i| !self.x[i].close_eps(&other.x[i], eps)) {
+		if range(0, n).any(
+			|i| !self.x[i].close_eps(&other.x[i], eps)
+		) {
 			false
 		} else {
 			true
@@ -1072,13 +1322,17 @@ impl<T: Eps> Eps for Vector<T> {
 	}
 }
 
-impl Inv<f64> for f64 {
+impl 
+Inv<f64> 
+for f64 {
 	fn inv(&self) -> f64 {
 		1f64 / *self
 	}
 }
 
-impl Eps for f64 {
+impl 
+Eps 
+for f64 {
 	fn close_eps(&self, other: &f64, eps: f64) -> bool {
 		let a = *self - *other;
 		let b = if a < 0f64 {
@@ -1090,13 +1344,17 @@ impl Eps for f64 {
 	}
 }
 
-impl Inv<f32> for f32 {
+impl 
+Inv<f32> 
+for f32 {
 	fn inv(&self) -> f32 {
 		1f32 / *self
 	}
 }
 
-impl Eps for f32 {
+impl 
+Eps 
+for f32 {
 	fn close_eps(&self, other: &f32, eps: f64) -> bool {
 		let a = *self - *other;
 		let b = if a < 0f32 {
