@@ -39,8 +39,6 @@
 //	f32		x	-
 //	f64		x	-
 
-use std::num::{Zero, One};
-
 /// Computes the square of the norm/length.
 #[inline(always)]
 pub fn norm_sq<T: NormSq<U>, U>(a: T) -> U {a.norm_sq()} 
@@ -125,13 +123,13 @@ Dual2<T> {
 }
 
 impl<
-	T: Zero
+	T: std::num::Zero
 >
 Scale<T> for Dual2<T> {
 	fn scale(factor: T) -> Dual2<T> {
 		Dual2 {
 			x0: factor, 
-			x1: Zero::zero()
+			x1: std::num::zero()
 		}
 	}
 }
@@ -229,13 +227,13 @@ Det<T> for Dual2<T> {
 }
 
 impl<
-	T: One + Zero
+	T: std::num::One + std::num::Zero
 >
-One for Dual2<T> {
+std::num::One for Dual2<T> {
 	fn one() -> Dual2<T> {
 		Dual2 {
-			x0: One::one(),
-			x1: Zero::zero()
+			x0: std::num::one(),
+			x1: std::num::zero()
 		}
 	}
 }
@@ -283,13 +281,13 @@ Complex<T> {
 }
 
 impl<
-	T: Zero
+	T: std::num::Zero
 >
 Scale<T> for Complex<T> {
 	fn scale(factor: T) -> Complex<T> {
 		Complex {
 			x0: factor,
-			x1: Zero::zero()
+			x1: std::num::zero()
 		}
 	}
 }
@@ -378,13 +376,13 @@ NormSq<T> for Complex<T> {
 }
 
 impl<
-	T: One + Zero
+	T: std::num::One + std::num::Zero
 >
-One for Complex<T> {
+std::num::One for Complex<T> {
 	fn one() -> Complex<T> {
 		Complex {
-			x0: One::one(),
-			x1: Zero::zero()
+			x0: std::num::one(),
+			x1: std::num::zero()
 		}
 	}
 }
@@ -449,15 +447,15 @@ Quaternion<T> {
 }
 
 impl<
-	T: Zero
+	T: std::num::Zero
 >
 Scale<T> 
 for Quaternion<T> {
 	fn scale(factor: T) -> Quaternion<T> {
 		Quaternion { 
-			x: Zero::zero(),
-			y: Zero::zero(),
-			z: Zero::zero(),
+			x: std::num::zero(),
+			y: std::num::zero(),
+			z: std::num::zero(),
 			w: factor 
 		}
 	}
@@ -599,16 +597,16 @@ for Quaternion<T> {
 }
 
 impl<
-	T: One + Zero
+	T: std::num::One + std::num::Zero
 >
-One 
+std::num::One 
 for Quaternion<T> {
 	fn one() -> Quaternion<T> {
 		Quaternion { 
-			x: Zero::zero(),
-			y: Zero::zero(),
-			z: Zero::zero(),
-			w: One::one() 
+			x: std::num::zero(),
+			y: std::num::zero(),
+			z: std::num::zero(),
+			w: std::num::one() 
 		}
 	}
 }
@@ -708,30 +706,30 @@ Matrix4<T> {
 }
 
 impl<
-	T: Zero + Clone
+	T: std::num::Zero + Clone
 >
 Scale<T> 
 for Matrix4<T> {
 	fn scale(factor: T) -> Matrix4<T> {
 		Matrix4 {
 			m11: factor.clone(),
-			m12: Zero::zero(),
-			m13: Zero::zero(),
-			m14: Zero::zero(),
+			m12: std::num::zero(),
+			m13: std::num::zero(),
+			m14: std::num::zero(),
 
-			m21: Zero::zero(),
+			m21: std::num::zero(),
 			m22: factor.clone(),
-			m23: Zero::zero(),
-			m24: Zero::zero(),
+			m23: std::num::zero(),
+			m24: std::num::zero(),
 
-			m31: Zero::zero(),
-			m32: Zero::zero(),
+			m31: std::num::zero(),
+			m32: std::num::zero(),
 			m33: factor.clone(),
-			m34: Zero::zero(),
+			m34: std::num::zero(),
 
-			m41: Zero::zero(),
-			m42: Zero::zero(),
-			m43: Zero::zero(),
+			m41: std::num::zero(),
+			m42: std::num::zero(),
+			m43: std::num::zero(),
 			m44: factor.clone()
 		}
 	}
@@ -1096,31 +1094,31 @@ for Matrix4<T> {
 }
 
 impl<
-	T: Zero + One
+	T: std::num::Zero + std::num::One
 >
-One 
+std::num::One 
 for Matrix4<T> {
 	fn one() -> Matrix4<T> {
 		Matrix4 {
-			m11: One::one(),
-			m12: Zero::zero(),
-			m13: Zero::zero(),
-			m14: Zero::zero(),
+			m11: std::num::one(),
+			m12: std::num::zero(),
+			m13: std::num::zero(),
+			m14: std::num::zero(),
 
-			m21: Zero::zero(),
-			m22: One::one(),
-			m23: Zero::zero(),
-			m24: Zero::zero(),
+			m21: std::num::zero(),
+			m22: std::num::one(),
+			m23: std::num::zero(),
+			m24: std::num::zero(),
 
-			m31: Zero::zero(),
-			m32: Zero::zero(),
-			m33: One::one(),
-			m34: Zero::zero(),
+			m31: std::num::zero(),
+			m32: std::num::zero(),
+			m33: std::num::one(),
+			m34: std::num::zero(),
 
-			m41: Zero::zero(),
-			m42: Zero::zero(),
-			m43: Zero::zero(),
-			m44: One::one()
+			m41: std::num::zero(),
+			m42: std::num::zero(),
+			m43: std::num::zero(),
+			m44: std::num::one()
 		}
 	}
 }
